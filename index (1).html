@@ -1,0 +1,4435 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDFito - Herramientas Profesionales de Imagen y PDF 100% Local</title>
+  <meta name="description" content="Comprime, convierte y edita PDFs e imágenes directamente en tu navegador. 100% privado y seguro, sin cargar archivos al servidor.">
+  
+  <!-- Google Fonts - Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      plugins: [
+        // Register 'light:' as a custom Tailwind variant that targets html.light
+        function({ addVariant }) {
+          addVariant('light', '.light &');
+        }
+      ],
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50:  '#f5f3ff',
+              100: '#ede9fe',
+              200: '#ddd6fe',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+            },
+            dark: {
+              bg:     '#09090b',
+              card:   '#18181b',
+              border: '#27272a',
+            }
+          },
+          animation: {
+            'fade-in':  'fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'slide-up': 'slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'scale-in': 'scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Styles -->
+  <style>
+/* ================================================================
+   PDFito — Premium Custom Styles
+   Dark mode: zinc-950 base, violet accents (unchanged, perfect)
+   Light mode: lavender-cream #f5f3ff base, deep indigo text,
+               violet/indigo colored shadows & accents
+   ================================================================ */
+
+:root {
+  /* Violet / Indigo brand palette */
+  --v50:  #f5f3ff;
+  --v100: #ede9fe;
+  --v200: #ddd6fe;
+  --v300: #c4b5fd;
+  --v400: #a78bfa;
+  --v500: #8b5cf6;
+  --v600: #7c3aed;
+  --v700: #6d28d9;
+
+  /* Dark base */
+  --dark-bg:     #09090b;
+  --dark-card:   #18181b;
+  --dark-border: #27272a;
+
+  /* Animations */
+  --animate-fade-in:  fade-in  0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-up: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-scale-in: scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Keyframes ──────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slide-up {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes scale-in {
+  from { transform: scale(0.96); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ── Glassmorphism ──────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.light .glass {
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(109, 40, 217, 0.18);
+  box-shadow: 0 4px 24px rgba(109, 40, 217, 0.08);
+}
+
+/* ── Dot-grid background ────────────────────────────────────── */
+.dot-grid {
+  background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.light .dot-grid {
+  background-image: radial-gradient(rgba(109, 40, 217, 0.15) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ── Scrollbars ─────────────────────────────────────────────── */
+::-webkit-scrollbar          { width: 6px; height: 6px; }
+::-webkit-scrollbar-track    { background: transparent; }
+.dark  ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 9999px; }
+.light ::-webkit-scrollbar-thumb { background: var(--v300); border-radius: 9999px; }
+.dark  ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+.light ::-webkit-scrollbar-thumb:hover { background: var(--v400); }
+
+/* ── Page transitions ───────────────────────────────────────── */
+.page-enter { animation: var(--animate-slide-up); }
+
+/* ================================================================
+   LIGHT MODE — GLOBAL OVERRIDES
+   All rules use .light as parent so they override dark defaults
+   ================================================================ */
+
+/* ── Body / Page background ─────────────────────────────────── */
+.light body {
+  background-color: var(--v50);
+  color: #1e1b4b;          /* deep indigo — excellent on lavender */
+}
+
+/* Ambient radial glow at the top of the page */
+.light body::before {
+  content: '';
+  position: fixed;
+  top: -160px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 860px;
+  height: 500px;
+  background: radial-gradient(ellipse at center,
+    rgba(139, 92, 246, 0.18) 0%,
+    rgba(99, 102, 241, 0.09) 50%,
+    transparent 75%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.light header {
+  background: rgba(245, 243, 255, 0.88) !important;
+  border-bottom: 1px solid rgba(109, 40, 217, 0.14) !important;
+  box-shadow: 0 1px 16px rgba(109, 40, 217, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.light footer {
+  background: rgba(237, 233, 254, 0.55) !important;
+  border-top: 1px solid rgba(109, 40, 217, 0.14) !important;
+  color: #6d28d9;
+}
+
+/* ── Mobile bottom nav ──────────────────────────────────────── */
+.light .mobile-nav {
+  background: rgba(245, 243, 255, 0.94) !important;
+  border-top: 1px solid rgba(109, 40, 217, 0.14) !important;
+  box-shadow: 0 -4px 20px rgba(109, 40, 217, 0.10);
+}
+
+/* ── TOOL CARDS ─────────────────────────────────────────────── */
+.light .tool-card {
+  background: #ffffff;
+  border: 1px solid rgba(109, 40, 217, 0.12) !important;
+  box-shadow:
+    0 2px 8px rgba(109, 40, 217, 0.07),
+    0 0 0 0 rgba(109, 40, 217, 0);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.light .tool-card:hover {
+  border-color: rgba(124, 58, 237, 0.45) !important;
+  box-shadow:
+    0 6px 28px rgba(109, 40, 217, 0.18),
+    0 2px 8px rgba(109, 40, 217, 0.10),
+    0 0 0 1px rgba(124, 58, 237, 0.12);
+  transform: translateY(-3px);
+}
+
+/* Card headings */
+.light .tool-card h3 {
+  color: #1e1b4b;
+}
+.light .tool-card:hover h3 {
+  color: #7c3aed;
+}
+
+/* Badge pill */
+.light .tool-badge {
+  background: var(--v100);
+  color: var(--v700);
+}
+
+/* Description text */
+.light .tool-card p {
+  color: #5b5299;
+}
+.light .tool-card:hover p {
+  color: #4c1d95;
+}
+
+/* "Abrir herramienta" action label */
+.light .tool-action-label {
+  color: var(--v400);
+}
+.light .tool-card:hover .tool-action-label {
+  color: var(--v700);
+}
+
+/* Star / fav button */
+.light .fav-btn:hover {
+  background: var(--v100) !important;
+  border-color: var(--v200) !important;
+}
+
+/* Category icon shadows */
+.light .cat-icon-pdf { box-shadow: 0 4px 14px rgba(239, 68, 68, 0.22); }
+.light .cat-icon-img { box-shadow: 0 4px 14px rgba(99, 102, 241, 0.22); }
+
+/* ── SEARCH BAR ─────────────────────────────────────────────── */
+.light input[type="text"] {
+  background: #ffffff !important;
+  border-color: rgba(109, 40, 217, 0.20) !important;
+  color: #1e1b4b !important;
+}
+.light input[type="text"]:focus {
+  border-color: var(--v500) !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.14) !important;
+}
+.light input[type="text"]::placeholder {
+  color: var(--v300) !important;
+}
+
+/* ── TABS (category filter) ─────────────────────────────────── */
+.light .tab-btn[data-active="true"],
+.light .tab-btn.active {
+  background: white !important;
+  color: #1e1b4b !important;
+  box-shadow: 0 1px 6px rgba(109, 40, 217, 0.12);
+}
+.light .tab-btn {
+  color: #7c6fab;
+}
+.light .tab-btn:hover {
+  color: #1e1b4b;
+}
+
+/* ── HERO TEXT ──────────────────────────────────────────────── */
+.light h1 {
+  background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.light h1 span {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.light p.hero-sub {
+  color: #5b5299;
+}
+
+/* ── GLASS CONTROLS ZONE ────────────────────────────────────── */
+.light .controls-zone {
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(109, 40, 217, 0.15);
+  box-shadow: 0 4px 20px rgba(109, 40, 217, 0.07);
+}
+
+/* ── TOOL VIEW PANELS (sidebar / upload zone) ───────────────── */
+.light .tool-panel,
+.light [class*="workspace-sidebar"],
+.light [id*="workspace-sidebar"] {
+  background: #ffffff;
+  border-color: rgba(109, 40, 217, 0.15) !important;
+  box-shadow: 0 4px 24px rgba(109, 40, 217, 0.08);
+}
+
+/* Upload zone */
+.light [id*="upload-zone"] {
+  border-color: rgba(109, 40, 217, 0.25) !important;
+  background: rgba(237, 233, 254, 0.35);
+}
+.light [id*="upload-zone"]:hover {
+  border-color: var(--v500) !important;
+  background: rgba(237, 233, 254, 0.60);
+}
+
+/* Inner panels */
+.light .light-panel {
+  background: var(--v50);
+  border-color: rgba(109, 40, 217, 0.15) !important;
+}
+
+/* Inputs & selects inside tool views */
+.light select,
+.light input[type="number"],
+.light input[type="range"] {
+  background: #ffffff !important;
+  border-color: rgba(109, 40, 217, 0.20) !important;
+  color: #1e1b4b !important;
+}
+
+/* ── MODAL ──────────────────────────────────────────────────── */
+.light #modal-container {
+  background: rgba(109, 40, 217, 0.10);
+  backdrop-filter: blur(8px);
+}
+.light #modal-container > div,
+.light [class*="bg-zinc-900"][class*="rounded-2xl"],
+.light [class*="bg-zinc-900"][class*="rounded-xl"] {
+  background: #ffffff !important;
+  border-color: rgba(109, 40, 217, 0.18) !important;
+  color: #1e1b4b;
+  box-shadow: 0 8px 40px rgba(109, 40, 217, 0.16);
+}
+
+/* ── TOAST NOTIFICATIONS ────────────────────────────────────── */
+.light .toast {
+  background: #ffffff;
+  border: 1px solid rgba(109, 40, 217, 0.18);
+  box-shadow: 0 8px 24px rgba(109, 40, 217, 0.14);
+  color: #1e1b4b;
+}
+
+/* ================================================================
+   DARK MODE — Cropper / comparison / drag (unchanged)
+   ================================================================ */
+.cropper-view-box,
+.cropper-face { border-radius: 8px; }
+.cropper-line, .cropper-point { background-color: #8b5cf6 !important; }
+.cropper-bg {
+  background-image: none !important;
+  background-color: #18181b !important;
+}
+.light .cropper-bg { background-color: var(--v50) !important; }
+
+.comparison-slider  { position: relative; overflow: hidden; user-select: none; }
+.comparison-image   { display: block; width: 100%; height: auto; pointer-events: none; }
+.comparison-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
+.comparison-handle  {
+  position: absolute; top: 0; bottom: 0; width: 2px;
+  background: #8b5cf6; cursor: ew-resize; z-index: 10;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+.comparison-handle-btn {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #8b5cf6; border: 3px solid #fff; color: white;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+@keyframes border-pulse {
+  0%, 100% { border-color: rgba(139, 92, 246, 0.4); }
+  50%       { border-color: rgba(139, 92, 246, 1);   }
+}
+.drag-active {
+  animation: border-pulse 1.5s infinite;
+  background: rgba(139, 92, 246, 0.05);
+}
+
+</style>
+  <!-- Cropper.js CSS (Local) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+  
+  <!-- Local Libraries -->
+  <!-- pdf-lib (PDF Creation and Manipulation) -->
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  
+  <!-- pdf.js (PDF Rendering to Canvas) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  
+  <!-- JSZip (Batch download zip generation) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  
+  <!-- Cropper.js (Visual Cropping) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.320.0/lucide.min.js"></script>
+  
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #09090b;
+      color: #fafafa;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    html.light body {
+      background-color: #f5f3ff;
+      color: #1e1b4b;
+    }
+  </style>
+</head>
+<body class="bg-[#09090b] text-[#fafafa] min-h-screen flex flex-col">
+
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-40 w-full border-b border-white/5 bg-[#09090b]/80 backdrop-blur-md transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#dashboard" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:scale-105 transition-transform duration-200">
+          <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
+        </div>
+        <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent group-hover:from-white group-hover:to-white transition-all light:from-zinc-950 light:to-zinc-500">PDFito</span>
+      </a>
+
+      <!-- Main Navigation Links -->
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="#dashboard" class="text-sm font-medium text-neutral-400 hover:text-white transition-colors light:text-violet-500 light:hover:text-indigo-900" id="nav-dashboard">Herramientas</a>
+        <a href="#history"   class="text-sm font-medium text-neutral-400 hover:text-white transition-colors light:text-violet-500 light:hover:text-indigo-900" id="nav-history">Historial</a>
+        <a href="#favorites" class="text-sm font-medium text-neutral-400 hover:text-white transition-colors light:text-violet-500 light:hover:text-indigo-900" id="nav-favorites">Favoritos</a>
+      </nav>
+
+      <!-- Right Action Items -->
+      <div class="flex items-center gap-3">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="p-2.5 rounded-xl border border-white/5 hover:bg-white/5 text-neutral-400 hover:text-white transition-all light:border-violet-200 light:hover:bg-violet-50 light:text-violet-500 light:hover:text-violet-700" aria-label="Cambiar tema">
+          <i data-lucide="sun"  class="w-4 h-4 hidden dark:block"></i>
+          <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+        </button>
+        
+        <!-- Short Information Dialog button -->
+        <button id="info-btn" class="p-2.5 rounded-xl border border-white/5 hover:bg-white/5 text-neutral-400 hover:text-white transition-all light:border-violet-200 light:hover:bg-violet-50 light:text-violet-500 light:hover:text-violet-700" aria-label="Información">
+          <i data-lucide="help-circle" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Accent Action -->
+        <a href="#dashboard" class="hidden sm:inline-flex items-center gap-1.5 px-4 h-10 rounded-xl bg-white text-zinc-950 text-sm font-medium hover:bg-neutral-200 active:scale-95 transition-all shadow-md light:bg-violet-600 light:text-white light:hover:bg-violet-700 light:shadow-violet-200">
+          Empezar gratis
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Bar -->
+  <div class="mobile-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#09090b]/90 border-t border-white/5 backdrop-blur-md py-2 flex justify-around items-center">
+    <a href="#dashboard" class="flex flex-col items-center gap-0.5 text-neutral-400 hover:text-white light:text-violet-500 light:hover:text-indigo-900">
+      <i data-lucide="grid"  class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium">Inicio</span>
+    </a>
+    <a href="#history"   class="flex flex-col items-center gap-0.5 text-neutral-400 hover:text-white light:text-violet-500 light:hover:text-indigo-900">
+      <i data-lucide="clock" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium">Historial</span>
+    </a>
+    <a href="#favorites" class="flex flex-col items-center gap-0.5 text-neutral-400 hover:text-white light:text-violet-500 light:hover:text-indigo-900">
+      <i data-lucide="star"  class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium">Favoritos</span>
+    </a>
+  </div>
+
+  <!-- Main SPA Container -->
+  <main class="flex-grow flex flex-col pb-20 md:pb-10">
+    <div id="app" class="w-full max-w-7xl mx-auto px-4 py-8 flex-grow flex flex-col">
+      <!-- Dynamic Views will be injected here -->
+      <div class="flex items-center justify-center flex-grow py-20">
+        <div class="flex flex-col items-center gap-3">
+          <div class="w-10 h-10 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-sm text-neutral-400 font-medium">Cargando PDFito...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Floating Toast Notification System Container -->
+  <div id="toast-container" class="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none"></div>
+
+  <!-- Global Modal Window Container -->
+  <div id="modal-container" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4"></div>
+
+  <!-- Info Modal Markup -->
+  <div id="info-modal-content" class="hidden">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-lg w-full scale-in text-left light:bg-white light:border-zinc-200">
+      <div class="flex items-center justify-between mb-4 border-b border-zinc-800 pb-3 light:border-zinc-100">
+        <h3 class="text-lg font-semibold flex items-center gap-2">
+          <i data-lucide="info" class="w-5 h-5 text-violet-500"></i>
+          Sobre PDFito
+        </h3>
+        <button class="close-modal-btn p-1.5 rounded-lg hover:bg-zinc-800 text-neutral-400 hover:text-white light:hover:bg-zinc-100 light:hover:text-zinc-900">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="space-y-3.5 text-sm text-neutral-400 light:text-zinc-600">
+        <p><strong>PDFito</strong> es una suite de herramientas profesionales para procesar archivos directamente en tu dispositivo.</p>
+        <div class="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-2 light:bg-zinc-50 light:border-zinc-200">
+          <div class="flex items-start gap-2.5">
+            <i data-lucide="shield-check" class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"></i>
+            <div>
+              <h4 class="font-medium text-white light:text-zinc-900">Privacidad del 100%</h4>
+              <p class="text-xs mt-0.5">Tus documentos e imágenes nunca abandonan tu computadora. Todo el procesamiento se realiza en local.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5 mt-3">
+            <i data-lucide="zap" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i>
+            <div>
+              <h4 class="font-medium text-white light:text-zinc-900">Procesamiento ultra-rápido</h4>
+              <p class="text-xs mt-0.5">Sin tiempos de subida ni bajada a servidores externos. Los archivos se procesan al instante.</p>
+            </div>
+          </div>
+        </div>
+        <p>Desarrollado con estándares web modernos, utiliza la potencia de la CPU de tu dispositivo y APIs nativas como HTML5 Canvas y Web APIs.</p>
+        <p class="text-xs text-neutral-500 pt-2 border-t border-zinc-800 light:border-zinc-100">Presiona <kbd class="px-1.5 py-0.5 bg-zinc-800 text-zinc-300 rounded text-[10px]">Esc</kbd> para cerrar o volver atrás.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/5 py-6 bg-zinc-950/40 text-center text-xs text-neutral-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p>© 2026 PDFito. Desarrollado con 💜 100% del lado del cliente.</p>
+      <div class="flex items-center gap-4">
+        <a href="#dashboard" class="hover:underline hover:text-neutral-400 light:text-violet-500 light:hover:text-indigo-700">Herramientas</a>
+        <a href="#history"   class="hover:underline hover:text-neutral-400 light:text-violet-500 light:hover:text-indigo-700">Historial</a>
+        <a href="#favorites" class="hover:underline hover:text-neutral-400 light:text-violet-500 light:hover:text-indigo-700">Favoritos</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Bundle (no ES modules — compatible with AWS S3 / static hosting) -->
+  <script>
+﻿/* PDFito Static Bundle */
+(function(window) { 'use strict';
+/* --- js\utils\helpers.js --- */
+/**
+ * General Utilities and Helpers for PDFito
+ */
+
+const Helpers = {
+  /**
+   * Format bytes to readable string (e.g. 1.25 MB).
+   * @param {number} bytes - Number of bytes.
+   * @param {number} [decimals=2] - Decimals count.
+   * @returns {string} Formatted size.
+   */
+  formatBytes(bytes, decimals = 2) {
+    if (bytes === 0 || bytes === null || bytes === undefined) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  },
+
+  /**
+   * Trigger a client-side download of a Blob or URL.
+   * @param {Blob|string} blobOrUrl - Blob object or URL string.
+   * @param {string} filename - Desired download name.
+   */
+  triggerDownload(blobOrUrl, filename) {
+    const isBlob = blobOrUrl instanceof Blob;
+    const url = isBlob ? URL.createObjectURL(blobOrUrl) : blobOrUrl;
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    
+    // Clean up
+    document.body.removeChild(a);
+    if (isBlob) {
+      // Delay slightly to ensure download starts
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    }
+  },
+
+  /**
+   * Convert a File object to a Uint8Array.
+   * @param {File} file - The file to convert.
+   * @returns {Promise<Uint8Array>}
+   */
+  fileToByteArray(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        resolve(new Uint8Array(e.target.result));
+      };
+      reader.onerror = (err) => {
+        reject(err);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  },
+
+  /**
+   * Convert a File object to an Image element (loaded and ready).
+   * @param {File|Blob} file - Image file or blob.
+   * @returns {Promise<HTMLImageElement>}
+   */
+  fileToImage(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = (err) => reject(new Error('No se pudo cargar la imagen. El formato podría estar dañado.'));
+        img.src = e.target.result;
+      };
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+    });
+  },
+
+  /**
+   * Create a ZIP file from multiple blobs and download it.
+   * Uses the global JSZip library.
+   * @param {Object[]} files - Array of files to zip.
+   * @param {string} files[].name - File name inside zip.
+   * @param {Blob} files[].blob - File blob content.
+   * @param {string} zipName - Name of the output zip file.
+   * @returns {Promise<void>}
+   */
+  async downloadAsZip(files, zipName) {
+    if (!window.JSZip) {
+      throw new Error('JSZip library is not loaded');
+    }
+    
+    const zip = new window.JSZip();
+    files.forEach(file => {
+      zip.file(file.name, file.blob);
+    });
+    
+    const content = await zip.generateAsync({ type: 'blob' });
+    this.triggerDownload(content, zipName);
+  },
+
+  /**
+   * Helper to rename a file's extension.
+   * @param {string} filename - Original filename.
+   * @param {string} newExt - New extension (e.g. 'png').
+   * @returns {string}
+   */
+  changeExtension(filename, newExt) {
+    const parts = filename.split('.');
+    if (parts.length > 1) {
+      parts.pop();
+    }
+    return `${parts.join('.')}.${newExt}`;
+  },
+
+  /**
+   * Helper to append text to filename before extension.
+   * @param {string} filename - Original filename.
+   * @param {string} suffix - Suffix to append (e.g. '-min').
+   * @returns {string}
+   */
+  appendSuffix(filename, suffix) {
+    const lastDot = filename.lastIndexOf('.');
+    if (lastDot === -1) return filename + suffix;
+    return filename.substring(0, lastDot) + suffix + filename.substring(lastDot);
+  }
+};
+
+
+/* --- js\utils\favorites.js --- */
+/**
+ * Favorites Manager for PDFito
+ * Manages the list of favorited tools in LocalStorage.
+ */
+
+const FAVORITES_STORAGE_KEY = 'pdfito_favorites';
+
+const FavoritesManager = {
+  /**
+   * Get the list of all favorited tool IDs.
+   * @returns {string[]} List of tool IDs.
+   */
+  getFavorites() {
+    try {
+      const stored = localStorage.getItem(FAVORITES_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      console.error('Error reading favorites from localStorage', e);
+      return [];
+    }
+  },
+
+  /**
+   * Toggle the favorite status of a tool.
+   * @param {string} toolId - The ID of the tool to toggle.
+   * @returns {boolean} True if the tool is now favorited, false otherwise.
+   */
+  toggleFavorite(toolId) {
+    if (!toolId) return false;
+    
+    try {
+      const favorites = this.getFavorites();
+      const index = favorites.indexOf(toolId);
+      let isFavorited = false;
+      
+      if (index === -1) {
+        favorites.push(toolId);
+        isFavorited = true;
+      } else {
+        favorites.splice(index, 1);
+      }
+      
+      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+      return isFavorited;
+    } catch (e) {
+      console.error('Error writing favorites to localStorage', e);
+      return false;
+    }
+  },
+
+  /**
+   * Check if a tool is favorited.
+   * @param {string} toolId - The ID of the tool.
+   * @returns {boolean} True if favorited.
+   */
+  isFavorited(toolId) {
+    if (!toolId) return false;
+    return this.getFavorites().includes(toolId);
+  }
+};
+
+
+/* --- js\utils\history.js --- */
+/**
+ * History Manager for PDFito
+ * Manages the log of recent file operations in LocalStorage.
+ * Keeps only metadata (file names, sizes, dates, results) to avoid filling the storage quota.
+ */
+
+const HISTORY_STORAGE_KEY = 'pdfito_history';
+const MAX_HISTORY_ENTRIES = 50;
+
+const HistoryManager = {
+  /**
+   * Get all history logs.
+   * @returns {Object[]} List of history records.
+   */
+  getHistory() {
+    try {
+      const stored = localStorage.getItem(HISTORY_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      console.error('Error reading history from localStorage', e);
+      return [];
+    }
+  },
+
+  /**
+   * Add a new record to the history log.
+   * @param {Object} entry - The log details.
+   * @param {string} entry.toolId - ID of the tool used.
+   * @param {string} entry.toolName - User-friendly name of the tool.
+   * @param {string} entry.fileName - Name of the output file or description (e.g. "3 archivos").
+   * @param {number} [entry.originalSize] - Size in bytes before processing.
+   * @param {number} [entry.finalSize] - Size in bytes after processing.
+   * @param {string} [entry.status] - Status (success, error).
+   */
+  addEntry({ toolId, toolName, fileName, originalSize = null, finalSize = null, status = 'success' }) {
+    try {
+      const history = this.getHistory();
+      
+      const newEntry = {
+        id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 9),
+        toolId,
+        toolName,
+        fileName,
+        originalSize,
+        finalSize,
+        status,
+        timestamp: Date.now()
+      };
+      
+      // Add to beginning of array
+      history.unshift(newEntry);
+      
+      // Limit list size
+      if (history.length > MAX_HISTORY_ENTRIES) {
+        history.pop();
+      }
+      
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+      return newEntry;
+    } catch (e) {
+      console.error('Error adding history entry', e);
+      return null;
+    }
+  },
+
+  /**
+   * Delete a single history entry by ID.
+   * @param {string} id - The ID of the entry to remove.
+   */
+  removeEntry(id) {
+    try {
+      let history = this.getHistory();
+      history = history.filter(entry => entry.id !== id);
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+      return true;
+    } catch (e) {
+      console.error('Error removing history entry', e);
+      return false;
+    }
+  },
+
+  /**
+   * Clear all history logs.
+   */
+  clearHistory() {
+    try {
+      localStorage.removeItem(HISTORY_STORAGE_KEY);
+      return true;
+    } catch (e) {
+      console.error('Error clearing history', e);
+      return false;
+    }
+  }
+};
+
+
+/* --- js\core\imageProcessor.js --- */
+/**
+ * Core Image Processing Engine for PDFito
+ * Performs formats conversions, resizing, compression, rotations and flips in-browser.
+ */
+
+const ImageProcessor = {
+  /**
+   * Process an HTML5 Image element with given transformations.
+   * @param {HTMLImageElement} img - Preloaded Image object.
+   * @param {Object} options - Transformation details.
+   * @param {number} [options.width] - Output width (defaults to original).
+   * @param {number} [options.height] - Output height (defaults to original).
+   * @param {number} [options.rotation=0] - Rotation angle in degrees (0, 90, 180, 270).
+   * @param {boolean} [options.flipH=false] - Flip horizontally.
+   * @param {boolean} [options.flipV=false] - Flip vertically.
+   * @param {string} [options.format='image/jpeg'] - Output mime-type ('image/jpeg', 'image/png', 'image/webp').
+   * @param {number} [options.quality=0.85] - Compression quality (0.0 to 1.0, only for jpeg and webp).
+   * @returns {Promise<Blob>} Output file Blob.
+   */
+  processImage(img, options = {}) {
+    return new Promise((resolve, reject) => {
+      try {
+        const width = options.width || img.naturalWidth;
+        const height = options.height || img.naturalHeight;
+        const rotation = options.rotation || 0;
+        const flipH = options.flipH || false;
+        const flipV = options.flipV || false;
+        const format = options.format || 'image/jpeg';
+        const quality = options.quality !== undefined ? options.quality : 0.85;
+
+        // Create virtual canvas
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          return reject(new Error('No se pudo inicializar el contexto 2D del Canvas'));
+        }
+
+        // Adjust dimensions based on rotation
+        const isSwapped = rotation === 90 || rotation === 270;
+        canvas.width = isSwapped ? height : width;
+        canvas.height = isSwapped ? width : height;
+
+        // Setup image rendering for maximum sharpness
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        // Translate context to center for rotation/flip operations
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+
+        // Apply rotation
+        if (rotation !== 0) {
+          ctx.rotate((rotation * Math.PI) / 180);
+        }
+
+        // Apply flip scaling
+        const scaleX = flipH ? -1 : 1;
+        const scaleY = flipV ? -1 : 1;
+        ctx.scale(scaleX, scaleY);
+
+        // Draw image centered
+        // Since ctx is translated to center, draw at half width/height offset
+        ctx.drawImage(img, -width / 2, -height / 2, width, height);
+
+        // Export to blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Falló la exportación de la imagen en Canvas'));
+          }
+        }, format, format === 'image/png' ? undefined : quality);
+
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
+
+  /**
+   * Helper to perform real-time resizing calculations.
+   * Maintains aspect ratio if desired.
+   * @param {number} origWidth - Original width.
+   * @param {number} origHeight - Original height.
+   * @param {Object} target - Target dimensions.
+   * @param {number} [target.width] - Target width.
+   * @param {number} [target.height] - Target height.
+   * @param {boolean} maintainRatio - Keep aspect ratio.
+   * @returns {{width: number, height: number}} Calculated width/height.
+   */
+  calculateDimensions(origWidth, origHeight, target, maintainRatio) {
+    let width = target.width;
+    let height = target.height;
+    
+    if (maintainRatio) {
+      if (width && !height) {
+        height = Math.round((width * origHeight) / origWidth);
+      } else if (height && !width) {
+        width = Math.round((height * origWidth) / origHeight);
+      } else if (width && height) {
+        // Adjust depending on which one was modified. Usually, fit inside boundaries.
+        const ratio = Math.min(width / origWidth, height / origHeight);
+        width = Math.round(origWidth * ratio);
+        height = Math.round(origHeight * ratio);
+      }
+    }
+    
+    return {
+      width: width || origWidth,
+      height: height || origHeight
+    };
+  }
+};
+
+
+/* --- js\core\pdfProcessor.js --- */
+/**
+ * Core PDF Processing Engine for PDFito
+ * Integrates pdf-lib for editing and pdf.js for rendering previews.
+ * All processing is done locally in the browser.
+ */
+
+const PdfProcessor = {
+  /**
+   * Helper to get pdf-lib from window global
+   */
+  _getPdfLib() {
+    if (!window.PDFLib) {
+      throw new Error('La biblioteca pdf-lib no se cargó correctamente');
+    }
+    return window.PDFLib;
+  },
+
+  /**
+   * Merge multiple PDFs into a single document.
+   * @param {Uint8Array[]} pdfArrays - Array of Uint8Arrays of PDF contents.
+   * @returns {Promise<Blob>} The merged PDF as a Blob.
+   */
+  async mergePdfs(pdfArrays) {
+    const { PDFDocument } = this._getPdfLib();
+    const mergedDoc = await PDFDocument.create();
+
+    for (const pdfBytes of pdfArrays) {
+      const doc = await PDFDocument.load(pdfBytes);
+      const copiedPages = await mergedDoc.copyPages(doc, doc.getPageIndices());
+      copiedPages.forEach((page) => mergedDoc.addPage(page));
+    }
+
+    const mergedPdfBytes = await mergedDoc.save();
+    return new Blob([mergedPdfBytes], { type: 'application/pdf' });
+  },
+
+  /**
+   * Extract specific pages from a PDF.
+   * @param {Uint8Array} pdfBytes - Original PDF bytes.
+   * @param {number[]} pageIndices - Array of 0-based page indices to extract.
+   * @returns {Promise<Blob>} The new PDF with extracted pages.
+   */
+  async extractPages(pdfBytes, pageIndices) {
+    const { PDFDocument } = this._getPdfLib();
+    const srcDoc = await PDFDocument.load(pdfBytes);
+    const destDoc = await PDFDocument.create();
+
+    const copiedPages = await destDoc.copyPages(srcDoc, pageIndices);
+    copiedPages.forEach((page) => destDoc.addPage(page));
+
+    const resultPdfBytes = await destDoc.save();
+    return new Blob([resultPdfBytes], { type: 'application/pdf' });
+  },
+
+  /**
+   * Split a single PDF into separate PDF blobs per page.
+   * @param {Uint8Array} pdfBytes - Original PDF bytes.
+   * @returns {Promise<Blob[]>} Array of PDF blobs.
+   */
+  async splitAllPages(pdfBytes) {
+    const { PDFDocument } = this._getPdfLib();
+    const srcDoc = await PDFDocument.load(pdfBytes);
+    const pageCount = srcDoc.getPageCount();
+    const resultBlobs = [];
+
+    for (let i = 0; i < pageCount; i++) {
+      const destDoc = await PDFDocument.create();
+      const [copiedPage] = await destDoc.copyPages(srcDoc, [i]);
+      destDoc.addPage(copiedPage);
+      const singlePdfBytes = await destDoc.save();
+      resultBlobs.push(new Blob([singlePdfBytes], { type: 'application/pdf' }));
+    }
+
+    return resultBlobs;
+  },
+
+  /**
+   * Reorder and rotate pages of a PDF.
+   * @param {Uint8Array} pdfBytes - Original PDF bytes.
+   * @param {Object[]} pageConfig - Mapping of pages.
+   * @param {number} pageConfig[].index - 0-based original page index.
+   * @param {number} pageConfig[].rotation - Degrees to rotate (0, 90, 180, 270).
+   * @returns {Promise<Blob>} The new configured PDF.
+   */
+  async reorderAndRotatePages(pdfBytes, pageConfig) {
+    const { PDFDocument, degrees } = this._getPdfLib();
+    const srcDoc = await PDFDocument.load(pdfBytes);
+    const destDoc = await PDFDocument.create();
+
+    const indices = pageConfig.map(cfg => cfg.index);
+    const copiedPages = await destDoc.copyPages(srcDoc, indices);
+
+    copiedPages.forEach((page, idx) => {
+      destDoc.addPage(page);
+      const rotationAngle = pageConfig[idx].rotation || 0;
+      if (rotationAngle !== 0) {
+        // PDF degrees rotation combines with existing rotation, so we set it
+        const currentRot = page.getRotation().angle;
+        page.setRotation(degrees((currentRot + rotationAngle) % 360));
+      }
+    });
+
+    const resultPdfBytes = await destDoc.save();
+    return new Blob([resultPdfBytes], { type: 'application/pdf' });
+  },
+
+  /**
+   * Convert multiple images into a single PDF document.
+   * @param {Object[]} imageList - List of images.
+   * @param {HTMLImageElement} imageList[].imgElement - Ready image element.
+   * @param {string} imageList[].type - Image format (e.g. 'image/png' or 'image/jpeg').
+   * @param {Object} config - Page setup.
+   * @param {string} [config.pageSize='fit'] - 'fit', 'a4', or 'letter'.
+   * @param {string} [config.orientation='portrait'] - 'portrait' or 'landscape'.
+   * @param {number} [config.margin=0] - Margin size in points.
+   * @returns {Promise<Blob>} The generated PDF Blob.
+   */
+  async convertImagesToPdf(imageList, config = {}) {
+    const { PDFDocument, PageSizes } = this._getPdfLib();
+    const pdfDoc = await PDFDocument.create();
+    
+    const pageSizeSetting = config.pageSize || 'fit';
+    const orientation = config.orientation || 'portrait';
+    const margin = config.margin !== undefined ? config.margin : 0;
+
+    for (const imageInfo of imageList) {
+      const { imgElement, type } = imageInfo;
+      
+      // 1. Draw image to canvas to get JPEG bytes
+      // (This standardizes the formats, as WebP/HEIC are not natively supported by pdf-lib)
+      const canvas = document.createElement('canvas');
+      canvas.width = imgElement.naturalWidth;
+      canvas.height = imgElement.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(imgElement, 0, 0);
+      
+      const isPng = type === 'image/png';
+      const format = isPng ? 'image/png' : 'image/jpeg';
+      const imageBytes = await new Promise((resolve) => {
+        canvas.toBlob(async (blob) => {
+          const buffer = await blob.arrayBuffer();
+          resolve(new Uint8Array(buffer));
+        }, format, 0.9);
+      });
+
+      // Embed in pdf-lib
+      const embeddedImage = isPng 
+        ? await pdfDoc.embedPng(imageBytes)
+        : await pdfDoc.embedJpg(imageBytes);
+
+      // Determine dimensions
+      const imgWidth = embeddedImage.width;
+      const imgHeight = embeddedImage.height;
+
+      let pageDimensions;
+      if (pageSizeSetting === 'a4') {
+        pageDimensions = PageSizes.A4;
+      } else if (pageSizeSetting === 'letter') {
+        pageDimensions = PageSizes.Letter;
+      } else {
+        // Fit to image (including margins)
+        pageDimensions = [imgWidth + margin * 2, imgHeight + margin * 2];
+      }
+
+      // Handle orientation for standard page sizes
+      let pageWidth = pageDimensions[0];
+      let pageHeight = pageDimensions[1];
+      if (pageSizeSetting !== 'fit' && orientation === 'landscape') {
+        pageWidth = pageDimensions[1];
+        pageHeight = pageDimensions[0];
+      }
+
+      // Add page
+      const page = pdfDoc.addPage([pageWidth, pageHeight]);
+
+      // Calculate image drawing bounding box inside page
+      const drawableWidth = pageWidth - margin * 2;
+      const drawableHeight = pageHeight - margin * 2;
+      
+      let drawWidth = drawableWidth;
+      let drawHeight = drawableHeight;
+
+      // Retain aspect ratio when fitting inside standard page sizes
+      if (pageSizeSetting !== 'fit') {
+        const ratio = Math.min(drawableWidth / imgWidth, drawableHeight / imgHeight);
+        drawWidth = imgWidth * ratio;
+        drawHeight = imgHeight * ratio;
+      }
+
+      // Centered offset inside margins
+      const x = margin + (drawableWidth - drawWidth) / 2;
+      const y = margin + (drawableHeight - drawHeight) / 2;
+
+      page.drawImage(embeddedImage, {
+        x,
+        y,
+        width: drawWidth,
+        height: drawHeight
+      });
+    }
+
+    const pdfBytes = await pdfDoc.save();
+    return new Blob([pdfBytes], { type: 'application/pdf' });
+  },
+
+  /**
+   * Render a specific page of a PDF document onto a canvas.
+   * Uses pdf.js.
+   * @param {Uint8Array} pdfBytes - PDF file bytes.
+   * @param {number} pageNum - 1-based page number.
+   * @param {number} [scale=1.5] - Render scale factor.
+   * @returns {Promise<HTMLCanvasElement>} Rendered canvas.
+   */
+  async renderPageToCanvas(pdfBytes, pageNum, scale = 1.0) {
+    if (!window.pdfjsLib) {
+      throw new Error('La biblioteca pdf.js no se cargó correctamente');
+    }
+
+    const pdfData = new Uint8Array(pdfBytes);
+    const loadingTask = window.pdfjsLib.getDocument({ data: pdfData });
+    const pdf = await loadingTask.promise;
+    const page = await pdf.getPage(pageNum);
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    
+    const viewport = page.getViewport({ scale });
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    const renderContext = {
+      canvasContext: context,
+      viewport: viewport
+    };
+
+    await page.render(renderContext).promise;
+    return canvas;
+  },
+
+  /**
+   * Get the total page count of a PDF document.
+   * @param {Uint8Array} pdfBytes - PDF file bytes.
+   * @returns {Promise<number>}
+   */
+  async getPageCount(pdfBytes) {
+    if (!window.pdfjsLib) {
+      throw new Error('La biblioteca pdf.js no se cargó correctamente');
+    }
+    const pdfData = new Uint8Array(pdfBytes);
+    const loadingTask = window.pdfjsLib.getDocument({ data: pdfData });
+    const pdf = await loadingTask.promise;
+    return pdf.numPages;
+  }
+};
+
+
+/* --- js\ui\components.js --- */
+/**
+ * UI Components for PDFito
+ * Includes Toast, Drag & Drop zones, File Lists, Progress Bars and Before/After slider.
+ */
+
+
+
+// Toast Notifications System
+const Toast = {
+  /**
+   * Show a visual toast alert.
+   * @param {string} message - Toast message.
+   * @param {string} [type='success'] - 'success', 'error', 'warning', 'info'.
+   * @param {number} [duration=4000] - Duration in ms.
+   */
+  show(message, type = 'success', duration = 4000) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    // Styling class based on type
+    let typeClass = 'border-emerald-500/25 bg-zinc-900/90 text-white';
+    let icon = 'check-circle';
+    let iconColor = 'text-emerald-400';
+
+    if (type === 'error') {
+      typeClass = 'border-rose-500/25 bg-zinc-900/90 text-white';
+      icon = 'x-circle';
+      iconColor = 'text-rose-400';
+    } else if (type === 'warning') {
+      typeClass = 'border-amber-500/25 bg-zinc-900/90 text-white';
+      icon = 'alert-triangle';
+      iconColor = 'text-amber-400';
+    } else if (type === 'info') {
+      typeClass = 'border-blue-500/25 bg-zinc-900/90 text-white';
+      icon = 'info';
+      iconColor = 'text-blue-400';
+    }
+
+    toast.className = `flex items-start gap-3 p-4 rounded-2xl border glass shadow-2xl pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 select-none ${typeClass}`;
+    toast.innerHTML = `
+      <div class="${iconColor} shrink-0 mt-0.5">
+        <i data-lucide="${icon}" class="w-5 h-5"></i>
+      </div>
+      <div class="flex-grow">
+        <p class="text-sm font-medium pr-4 leading-tight">${message}</p>
+      </div>
+      <button class="shrink-0 text-neutral-500 hover:text-neutral-300 hover:scale-105 transition-all">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    `;
+
+    container.appendChild(toast);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+      toast.classList.remove('translate-y-2', 'opacity-0');
+    });
+
+    // Setup Lucide icons
+    if (window.lucide) {
+      window.lucide.createIcons({ attrs: { class: 'w-4 h-4' } });
+      // Re-run for the specific elements
+      const targetIcon = toast.querySelector(`[data-lucide="${icon}"]`);
+      if (targetIcon) window.lucide.createIcons({ node: targetIcon });
+    }
+
+    // Dismiss on click close button
+    const closeBtn = toast.querySelector('button');
+    closeBtn.onclick = () => dismiss();
+
+    // Auto dismiss timer
+    const timer = setTimeout(() => {
+      dismiss();
+    }, duration);
+
+    function dismiss() {
+      clearTimeout(timer);
+      toast.classList.add('translate-y-2', 'opacity-0');
+      toast.addEventListener('transitionend', () => {
+        toast.remove();
+      });
+    }
+  }
+};
+
+// Drag and Drop File Input Area
+const DragDropArea = {
+  /**
+   * Initialize a drag & drop zone.
+   * @param {Object} config - Config details.
+   * @param {string} config.containerId - Selector of HTML container.
+   * @param {string} [config.inputId] - ID of file input (auto generated if missing).
+   * @param {string[]} config.accept - Allowed mime types/extensions (e.g. ['image/*', '.pdf']).
+   * @param {boolean} [config.multiple=true] - Support multiple files.
+   * @param {Function} config.onFilesSelected - Callback when files are chosen.
+   */
+  init({ containerId, inputId = 'file-input', accept = [], multiple = true, onFilesSelected }) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // Create file input dynamically if it doesn't exist
+    let input = document.getElementById(inputId);
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'file';
+      input.id = inputId;
+      input.className = 'hidden';
+      input.multiple = multiple;
+      if (accept.length > 0) {
+        input.accept = accept.join(',');
+      }
+      container.appendChild(input);
+    }
+
+    // Click container to trigger input click
+    container.style.cursor = 'pointer';
+    container.onclick = (e) => {
+      // Prevent loops if clicked target is label
+      if (e.target !== input) {
+        input.click();
+      }
+    };
+
+    // Prevent default browser drag drop events
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      container.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }, false);
+    });
+
+    // Add classes on drag over
+    ['dragenter', 'dragover'].forEach(eventName => {
+      container.addEventListener(eventName, () => {
+        container.classList.add('drag-active', 'scale-[1.01]');
+      }, false);
+    });
+
+    // Remove classes on drag leave
+    ['dragleave', 'drop'].forEach(eventName => {
+      container.addEventListener(eventName, () => {
+        container.classList.remove('drag-active', 'scale-[1.01]');
+      }, false);
+    });
+
+    // Drop handler
+    container.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = Array.from(dt.files);
+      if (files.length > 0) {
+        onFilesSelected(files);
+      }
+    });
+
+    // Click input handler
+    input.onchange = () => {
+      if (input.files.length > 0) {
+        onFilesSelected(Array.from(input.files));
+        // Reset so same file can be uploaded again
+        input.value = '';
+      }
+    };
+  }
+};
+
+// File List Visual Display
+const FileList = {
+  /**
+   * Render files in container.
+   * @param {File[]} files - List of File objects.
+   * @param {string} containerId - Target element ID.
+   * @param {Function} onRemove - Callback with index when remove clicked.
+   */
+  render(files, containerId, onRemove) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    if (files.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-8 text-neutral-500 light:text-zinc-400 text-sm">
+          Ningún archivo cargado todavía.
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+        ${files.map((file, idx) => {
+          const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
+          const icon = isPdf ? 'file-text' : 'image';
+          const iconColor = isPdf ? 'text-rose-400' : 'text-blue-400';
+          
+          return `
+            <div class="flex items-center justify-between p-3 rounded-xl bg-zinc-900/60 border border-white/5 hover:border-white/10 transition-all light:bg-zinc-100/60 light:border-black/5" data-file-idx="${idx}">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center shrink-0 ${iconColor} light:bg-zinc-200">
+                  <i data-lucide="${icon}" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-sm font-medium text-white truncate light:text-zinc-900 leading-tight">${file.name}</p>
+                  <p class="text-xs text-neutral-500 mt-0.5 leading-none">${Helpers.formatBytes(file.size)}</p>
+                </div>
+              </div>
+              <button class="remove-file-btn p-1.5 rounded-lg text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer" data-idx="${idx}" title="Eliminar archivo">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+
+    // Initialize Lucide icons
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+
+    // Attach click events to remove buttons
+    const removeButtons = container.querySelectorAll('.remove-file-btn');
+    removeButtons.forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.getAttribute('data-idx'));
+        onRemove(idx);
+      };
+    });
+  }
+};
+
+// Loading / Processing Progress Bar
+const ProgressBar = {
+  /**
+   * Render or update a progress bar in an element.
+   * @param {string} containerId - Target container ID.
+   * @param {number} percentage - 0 to 100.
+   * @param {string} statusText - Description label.
+   */
+  render(containerId, percentage, statusText = 'Procesando...') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.innerHTML = `
+      <div class="space-y-2 py-4">
+        <div class="flex justify-between items-center text-xs font-medium text-neutral-400 light:text-zinc-500">
+          <span>${statusText}</span>
+          <span>${Math.round(percentage)}%</span>
+        </div>
+        <div class="w-full h-2 bg-zinc-800 rounded-full overflow-hidden light:bg-zinc-200">
+          <div class="h-full bg-gradient-to-r from-violet-500 to-indigo-500 transition-all duration-300 ease-out" style="width: ${percentage}%"></div>
+        </div>
+      </div>
+    `;
+  },
+  
+  /**
+   * Remove the progress bar.
+   * @param {string} containerId - Target container ID.
+   */
+  clear(containerId) {
+    const container = document.getElementById(containerId);
+    if (container) container.innerHTML = '';
+  }
+};
+
+// Before & After Image Comparison Modal Slider
+const ComparisonModal = {
+  /**
+   * Display a comparison slider in a modal overlay.
+   * @param {string} originalSrc - Data URL or Object URL of original image.
+   * @param {string} processedSrc - Data URL or Object URL of processed image.
+   * @param {string} originalLabel - Info under original image.
+   * @param {string} processedLabel - Info under processed image.
+   */
+  show(originalSrc, processedSrc, originalLabel = 'Original', processedLabel = 'Comprimida') {
+    const container = document.getElementById('modal-container');
+    if (!container) return;
+
+    container.className = "fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4";
+    container.innerHTML = `
+      <div class="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 max-w-4xl w-full scale-in text-center flex flex-col gap-4 shadow-2xl light:bg-white light:border-zinc-200">
+        <!-- Header -->
+        <div class="flex justify-between items-center border-b border-zinc-900 pb-3 light:border-zinc-100">
+          <div class="text-left">
+            <h3 class="text-lg font-bold text-white light:text-zinc-900 flex items-center gap-2">
+              <i data-lucide="sliders" class="text-violet-500 w-5 h-5"></i>
+              Comparación Antes / Después
+            </h3>
+            <p class="text-xs text-neutral-500 mt-0.5">Arrastra la barra central para comparar el resultado en tiempo real.</p>
+          </div>
+          <button class="close-modal-btn p-1.5 rounded-xl hover:bg-zinc-900 text-neutral-400 hover:text-white transition-all light:hover:bg-zinc-100 light:hover:text-zinc-900">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Slider Container -->
+        <div class="relative w-full max-h-[60vh] flex items-center justify-center overflow-hidden rounded-2xl border border-zinc-900 bg-zinc-900 light:bg-zinc-50 light:border-zinc-200 select-none">
+          <div class="comparison-slider w-full max-w-full h-full relative" id="comp-slider">
+            <!-- Background Image (Original) -->
+            <img src="${originalSrc}" class="comparison-image object-contain w-full h-full max-h-[55vh]" alt="Original">
+            
+            <!-- Foreground Image Overlay (Processed) -->
+            <div class="comparison-overlay absolute inset-0 w-1/2 border-r border-violet-500" id="comp-overlay">
+              <img src="${processedSrc}" class="comparison-image object-contain absolute top-0 left-0 w-full h-full max-h-[55vh]" alt="Processed" id="comp-foreground-img">
+            </div>
+
+            <!-- Handle -->
+            <div class="comparison-handle" id="comp-handle" style="left: 50%;">
+              <div class="comparison-handle-btn">
+                <i data-lucide="split" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Labels -->
+        <div class="grid grid-cols-2 gap-4 text-xs font-semibold">
+          <div class="text-left text-neutral-400 light:text-zinc-500">
+            <span class="inline-block px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-neutral-300 light:bg-zinc-100 light:text-zinc-600 light:border-zinc-200">${originalLabel}</span>
+          </div>
+          <div class="text-right text-violet-400">
+            <span class="inline-block px-2.5 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 light:bg-violet-50 light:text-violet-600">${processedLabel}</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.classList.remove('hidden');
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+
+    const slider = document.getElementById('comp-slider');
+    const overlay = document.getElementById('comp-overlay');
+    const handle = document.getElementById('comp-handle');
+    const fgImg = document.getElementById('comp-foreground-img');
+    const closeBtn = container.querySelector('.close-modal-btn');
+
+    // Wait until images are loaded to match scaling correctly
+    const originalImg = slider.querySelector('img');
+    
+    function setSliderWidths() {
+      // Get exact width and height of the rendered image element (object-contain)
+      const rect = originalImg.getBoundingClientRect();
+      const sliderWidth = rect.width;
+      
+      // Resize the foreground image matching container size
+      fgImg.style.width = `${sliderWidth}px`;
+      fgImg.style.height = `${rect.height}px`;
+      
+      // Center the foreground image matching offset
+      fgImg.style.left = `${originalImg.offsetLeft}px`;
+      fgImg.style.top = `${originalImg.offsetTop}px`;
+    }
+
+    originalImg.onload = setSliderWidths;
+    if (originalImg.complete) setSliderWidths();
+    window.addEventListener('resize', setSliderWidths);
+
+    // Close handler
+    const closeModal = () => {
+      container.classList.add('hidden');
+      window.removeEventListener('resize', setSliderWidths);
+    };
+    
+    closeBtn.onclick = closeModal;
+    // Click backdrop
+    container.onclick = (e) => {
+      if (e.target === container) closeModal();
+    };
+
+    // Dragging logic
+    let isDragging = false;
+
+    const moveSlider = (clientX) => {
+      const rect = originalImg.getBoundingClientRect();
+      const sliderLeft = rect.left;
+      const sliderWidth = rect.width;
+      
+      let position = clientX - sliderLeft;
+      
+      // Boundaries
+      if (position < 0) position = 0;
+      if (position > sliderWidth) position = sliderWidth;
+
+      const percentage = (position / sliderWidth) * 100;
+      
+      // Update styling
+      handle.style.left = `${originalImg.offsetLeft + position}px`;
+      overlay.style.width = `${originalImg.offsetLeft + position}px`;
+    };
+
+    // Mouse Events
+    handle.onmousedown = (e) => {
+      e.preventDefault();
+      isDragging = true;
+    };
+
+    window.onmousemove = (e) => {
+      if (!isDragging) return;
+      moveSlider(e.clientX);
+    };
+
+    window.onmouseup = () => {
+      isDragging = false;
+    };
+
+    // Touch Events (Mobile)
+    handle.ontouchstart = () => {
+      isDragging = true;
+    };
+
+    window.ontouchmove = (e) => {
+      if (!isDragging) return;
+      moveSlider(e.touches[0].clientX);
+    };
+
+    window.ontouchend = () => {
+      isDragging = false;
+    };
+  }
+};
+
+
+/* --- js\ui\dashboard.js --- */
+/**
+ * Dashboard View for PDFito
+ * Displays the list of tools, search filtering, category tabs, and favorite triggers.
+ */
+
+
+
+// The list of tools available in the application
+const TOOLS = [
+  {
+    id: 'merge-pdf',
+    name: 'Unir PDF',
+    description: 'Une varios archivos PDF en un solo documento organizado en el orden que prefieras.',
+    category: 'pdf',
+    icon: 'combine',
+    badge: 'Organizar'
+  },
+  {
+    id: 'split-pdf',
+    name: 'Dividir PDF',
+    description: 'Separa un documento PDF por páginas individuales o genera archivos por rangos.',
+    category: 'pdf',
+    icon: 'scissors',
+    badge: 'Organizar'
+  },
+  {
+    id: 'extract-pages-pdf',
+    name: 'Extraer Páginas',
+    description: 'Extrae páginas seleccionadas visualmente de tu PDF para crear un nuevo documento.',
+    category: 'pdf',
+    icon: 'copy',
+    badge: 'Editar'
+  },
+  {
+    id: 'organize-pdf',
+    name: 'Ordenar y Rotar PDF',
+    description: 'Reordena las páginas de tu PDF mediante drag & drop y gíralas de forma interactiva.',
+    category: 'pdf',
+    icon: 'grid',
+    badge: 'Organizar'
+  },
+  {
+    id: 'images-to-pdf',
+    name: 'Imágenes a PDF',
+    description: 'Convierte y empaqueta tus imágenes JPG/PNG en un documento PDF con márgenes ajustables.',
+    category: 'pdf',
+    icon: 'file-image',
+    badge: 'Convertir'
+  },
+  {
+    id: 'compress-image',
+    name: 'Comprimir Imagen',
+    description: 'Reduce el peso de tus imágenes JPG, PNG o WEBP sin perder calidad visible.',
+    category: 'image',
+    icon: 'minimize-2',
+    badge: 'Reducir'
+  },
+  {
+    id: 'resize-image',
+    name: 'Cambiar Tamaño',
+    description: 'Redimensiona imágenes especificando el ancho, alto o porcentaje de escala.',
+    category: 'image',
+    icon: 'maximize-2',
+    badge: 'Redimensionar'
+  },
+  {
+    id: 'crop-image',
+    name: 'Recortar Imagen',
+    description: 'Recorta áreas específicas de tus fotos y gráficos de forma visual e intuitiva.',
+    category: 'image',
+    icon: 'crop',
+    badge: 'Editar'
+  },
+  {
+    id: 'rotate-image',
+    name: 'Rotar y Voltear',
+    description: 'Rota tus imágenes o haz giros tipo espejo (horizontal y vertical).',
+    category: 'image',
+    icon: 'rotate-cw',
+    badge: 'Editar'
+  },
+  {
+    id: 'jpg-to-png',
+    name: 'JPG a PNG',
+    description: 'Convierte tus imágenes JPG a formato PNG en cuestión de milisegundos.',
+    category: 'image',
+    icon: 'image',
+    badge: 'Convertir'
+  },
+  {
+    id: 'png-to-jpg',
+    name: 'PNG a JPG',
+    description: 'Convierte imágenes PNG a formato JPG con fondo blanco opaco.',
+    category: 'image',
+    icon: 'image',
+    badge: 'Convertir'
+  },
+  {
+    id: 'webp-convert',
+    name: 'Convertir a WEBP',
+    description: 'Optimiza el formato de tus imágenes JPG o PNG convirtiéndolas a WEBP.',
+    category: 'image',
+    icon: 'image-plus',
+    badge: 'Convertir'
+  }
+];
+
+const DashboardView = {
+  activeTab: 'all', // 'all', 'pdf', 'image', 'favorites'
+  searchQuery: '',
+
+  /**
+   * Render the dashboard page inside the app container.
+   * @param {HTMLElement} container - App mount container.
+   */
+  render(container) {
+    container.innerHTML = `
+      <div class="space-y-10 page-enter">
+        
+        <!-- Hero Section -->
+        <div class="text-center max-w-2xl mx-auto space-y-4 py-6">
+          <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-b from-white to-neutral-400 bg-clip-text text-transparent leading-tight light:from-indigo-950 light:to-violet-700">
+            Simplifica el trabajo con tus <span class="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent light:from-violet-600 light:to-indigo-500">PDFs e Imágenes</span>
+          </h1>
+          <p class="hero-sub text-neutral-400 text-sm md:text-base leading-relaxed light:text-indigo-400">
+            Herramientas profesionales y seguras que se ejecutan 100% en tu navegador. Tus archivos nunca viajan a ningún servidor externo.
+          </p>
+        </div>
+
+        <!-- Controls Zone (Search & Tabs) -->
+        <div class="controls-zone flex flex-col md:flex-row gap-4 items-center justify-between p-4 rounded-2xl glass">
+          <!-- Search Bar -->
+          <div class="relative w-full md:max-w-md">
+            <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 light:text-violet-400"></i>
+            <input 
+              type="text" 
+              id="tool-search" 
+              placeholder="Buscar herramienta... (ej. Unir PDF, Comprimir)" 
+              value="${this.searchQuery}"
+              class="w-full pl-10 pr-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all light:bg-white light:border-violet-200 light:text-indigo-950 light:placeholder-violet-300"
+            >
+            ${this.searchQuery ? `
+              <button id="clear-search-btn" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white light:text-violet-400 light:hover:text-violet-700">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            ` : ''}
+          </div>
+
+          <!-- Category Filter Tabs -->
+          <div class="flex p-1 bg-zinc-950 border border-zinc-900 rounded-xl w-full md:w-auto overflow-x-auto light:bg-violet-50 light:border-violet-200">
+            <button class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${this.activeTab === 'all'       ? 'bg-zinc-900 text-white shadow light:bg-white light:text-indigo-900 light:shadow-violet-100' : 'text-neutral-400 hover:text-neutral-200 light:text-violet-500 light:hover:text-indigo-800'}" data-tab="all">Todos</button>
+            <button class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${this.activeTab === 'pdf'       ? 'bg-zinc-900 text-white shadow light:bg-white light:text-indigo-900 light:shadow-violet-100' : 'text-neutral-400 hover:text-neutral-200 light:text-violet-500 light:hover:text-indigo-800'}" data-tab="pdf">PDF</button>
+            <button class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${this.activeTab === 'image'     ? 'bg-zinc-900 text-white shadow light:bg-white light:text-indigo-900 light:shadow-violet-100' : 'text-neutral-400 hover:text-neutral-200 light:text-violet-500 light:hover:text-indigo-800'}" data-tab="image">Imágenes</button>
+            <button class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${this.activeTab === 'favorites' ? 'bg-zinc-900 text-white shadow light:bg-white light:text-indigo-900 light:shadow-violet-100' : 'text-neutral-400 hover:text-neutral-200 light:text-violet-500 light:hover:text-indigo-800'}" data-tab="favorites">
+              <span class="flex items-center gap-1.5">
+                <i data-lucide="star" class="w-3.5 h-3.5 ${this.activeTab === 'favorites' ? 'fill-violet-400 text-violet-400' : ''}"></i>
+                Favoritos
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tools Grid -->
+        <div id="tools-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Dynamically Rendered Cards -->
+        </div>
+
+      </div>
+    `;
+
+    this.renderCards();
+    this.bindEvents(container);
+  },
+
+  /**
+   * Filter and render cards into the grid
+   */
+  renderCards() {
+    const grid = document.getElementById('tools-grid');
+    if (!grid) return;
+
+    // Filter tools
+    const filteredTools = TOOLS.filter(tool => {
+      // Category Tab Filter
+      if (this.activeTab === 'pdf' && tool.category !== 'pdf') return false;
+      if (this.activeTab === 'image' && tool.category !== 'image') return false;
+      if (this.activeTab === 'favorites' && !FavoritesManager.isFavorited(tool.id)) return false;
+
+      // Search Query Filter
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        return tool.name.toLowerCase().includes(query) || 
+               tool.description.toLowerCase().includes(query) || 
+               tool.badge.toLowerCase().includes(query);
+      }
+
+      return true;
+    });
+
+    if (filteredTools.length === 0) {
+      grid.className = "flex flex-col items-center justify-center py-20 text-center col-span-full gap-3";
+      grid.innerHTML = `
+        <div class="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center text-neutral-500 light:bg-zinc-100">
+          <i data-lucide="search-code" class="w-6 h-6"></i>
+        </div>
+        <div class="space-y-1">
+          <h3 class="text-sm font-semibold text-white light:text-zinc-900">No se encontraron herramientas</h3>
+          <p class="text-xs text-neutral-500 max-w-xs light:text-zinc-500">Prueba con términos diferentes o cambia de pestaña de filtros.</p>
+        </div>
+      `;
+      if (window.lucide) window.lucide.createIcons();
+      return;
+    }
+
+    grid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6";
+    grid.innerHTML = filteredTools.map(tool => {
+      const isFav = FavoritesManager.isFavorited(tool.id);
+      // Dark mode gradient + icon color per category
+      const categoryColor = tool.category === 'pdf'
+        ? 'from-rose-500/20 to-red-500/10 text-rose-400'
+        : 'from-blue-500/20 to-indigo-500/10 text-blue-400';
+      const catIconClass = tool.category === 'pdf' ? 'cat-icon-pdf' : 'cat-icon-img';
+
+      return `
+        <div class="tool-card group relative flex flex-col justify-between p-6 rounded-2xl
+          bg-zinc-900/60 border border-white/5
+          hover:border-white/10 hover:bg-zinc-900/80 hover:shadow-xl hover:shadow-black/20 hover:-translate-y-0.5
+          transition-all duration-300 cursor-pointer" data-href="#${tool.id}">
+
+          <!-- Favorite Star Icon -->
+          <button class="fav-btn absolute top-5 right-5 p-1.5 rounded-lg border border-white/0
+            hover:border-white/5 hover:bg-white/5
+            text-neutral-600 hover:text-yellow-400 transition-all
+            light:hover:border-violet-100 light:hover:bg-violet-50 z-10"
+            data-id="${tool.id}" title="${isFav ? 'Quitar de favoritos' : 'Añadir a favoritos'}">
+            <i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-yellow-400 text-yellow-400' : ''}"></i>
+          </button>
+
+          <div class="space-y-4">
+            <!-- Category Icon -->
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-tr flex items-center justify-center shadow-inner ${categoryColor} ${catIconClass}">
+              <i data-lucide="${tool.icon}" class="w-5 h-5"></i>
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-white group-hover:text-violet-400 transition-colors
+                  light:text-zinc-950 light:group-hover:text-violet-600 leading-tight">${tool.name}</h3>
+                <span class="tool-badge px-2 py-0.5 text-[9px] font-bold tracking-wide uppercase rounded-full
+                  bg-zinc-800 text-neutral-400">${tool.badge}</span>
+              </div>
+              <p class="text-xs text-neutral-400 leading-relaxed light:text-zinc-500
+                group-hover:text-neutral-300 light:group-hover:text-zinc-700 transition-colors">${tool.description}</p>
+            </div>
+          </div>
+
+          <!-- Bottom Action link -->
+          <div class="tool-action-label mt-6 flex items-center gap-1 text-xs font-semibold
+            text-neutral-500 group-hover:text-white transition-colors light:text-violet-400">
+            Abrir herramienta
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200"></i>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  },
+
+  /**
+   * Bind event listeners for search and filter buttons
+   */
+  bindEvents(container) {
+    const searchInput = document.getElementById('tool-search');
+    const tabButtons = container.querySelectorAll('.tab-btn');
+    
+    // Search listener
+    if (searchInput) {
+      searchInput.oninput = (e) => {
+        this.searchQuery = e.target.value;
+        this.renderCards();
+        
+        // Re-render clear search button if needed
+        const clearBtn = document.getElementById('clear-search-btn');
+        if (this.searchQuery && !clearBtn) {
+          this.render(container); // Re-render shell to show clear button
+          // refocus
+          const newSearch = document.getElementById('tool-search');
+          newSearch.focus();
+          newSearch.setSelectionRange(newSearch.value.length, newSearch.value.length);
+        } else if (!this.searchQuery && clearBtn) {
+          this.render(container);
+          const newSearch = document.getElementById('tool-search');
+          newSearch.focus();
+        }
+      };
+    }
+
+    // Clear search listener
+    const clearSearchBtn = document.getElementById('clear-search-btn');
+    if (clearSearchBtn) {
+      clearSearchBtn.onclick = () => {
+        this.searchQuery = '';
+        this.render(container);
+        document.getElementById('tool-search').focus();
+      };
+    }
+
+    // Tab buttons listener
+    tabButtons.forEach(btn => {
+      btn.onclick = () => {
+        this.activeTab = btn.getAttribute('data-tab');
+        
+        // Update active visual state
+        tabButtons.forEach(b => {
+          const isActive = b.getAttribute('data-tab') === this.activeTab;
+          b.className = `tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+            isActive
+              ? 'bg-zinc-900 text-white shadow light:bg-white light:text-indigo-900 light:shadow-violet-100'
+              : 'text-neutral-400 hover:text-neutral-200 light:text-violet-500 light:hover:text-indigo-800'
+          }`;
+        });
+
+        this.renderCards();
+      };
+    });
+
+    // Delegate clicks for Card redirection and Favorites toggles
+    const grid = document.getElementById('tools-grid');
+    if (grid) {
+      grid.onclick = (e) => {
+        // Check if favorite star clicked
+        const favBtn = e.target.closest('.fav-btn');
+        if (favBtn) {
+          e.stopPropagation();
+          const toolId = favBtn.getAttribute('data-id');
+          FavoritesManager.toggleFavorite(toolId);
+          
+          if (this.activeTab === 'favorites') {
+            this.renderCards(); // Refresh grid to remove item
+          } else {
+            // Update star icon styling in place
+            const isFav = FavoritesManager.isFavorited(toolId);
+            const starIcon = favBtn.querySelector('[data-lucide="star"]');
+            if (starIcon) {
+              if (isFav) {
+                starIcon.classList.add('fill-yellow-400', 'text-yellow-400');
+              } else {
+                starIcon.classList.remove('fill-yellow-400', 'text-yellow-400');
+              }
+            }
+          }
+          return;
+        }
+
+        // Check if card clicked
+        const card = e.target.closest('[data-href]');
+        if (card) {
+          const href = card.getAttribute('data-href');
+          window.location.hash = href;
+        }
+      };
+    }
+  }
+};
+
+
+/* --- js\ui\imageTools.js --- */
+/**
+ * Image Tools View Controller for PDFito
+ * Manages all image operations: Compression, Resizing, Cropping, Rotations and Conversions.
+ */
+
+
+
+
+
+
+const ImageToolsView = {
+  toolId: null,
+  files: [],
+  selectedFileIdx: 0,
+  cropperInstance: null,
+  
+  // State for settings
+  settings: {
+    quality: 0.8,
+    width: null,
+    height: null,
+    maintainAspectRatio: true,
+    scalePercent: 100,
+    rotation: 0, // 0, 90, 180, 270
+    flipH: false,
+    flipV: false,
+    cropAspectRatio: NaN, // NaN for Free, 1 for 1:1, etc.
+  },
+
+  // State for output comparison
+  comparisonData: {
+    originalUrl: null,
+    processedUrl: null,
+    originalSize: null,
+    processedSize: null
+  },
+
+  /**
+   * Render the tool workspace.
+   * @param {HTMLElement} container - App mount container.
+   * @param {string} toolId - Active tool identifier.
+   */
+  render(container, toolId) {
+    this.toolId = toolId;
+    this.resetState();
+    
+    const toolMeta = this.getToolMeta(toolId);
+    
+    container.innerHTML = `
+      <div class="space-y-6 page-enter max-w-5xl mx-auto">
+        <!-- Back and Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-900 pb-5 light:border-zinc-100">
+          <div class="space-y-1">
+            <a href="#dashboard" class="inline-flex items-center gap-1 text-xs font-semibold text-neutral-400 hover:text-white transition-colors light:text-zinc-500 light:hover:text-zinc-950 mb-1">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+              Volver al panel
+            </a>
+            <h2 class="text-2xl font-extrabold text-white light:text-zinc-950">${toolMeta.title}</h2>
+            <p class="text-xs text-neutral-400 light:text-zinc-500 max-w-xl">${toolMeta.description}</p>
+          </div>
+          
+          <div id="tool-badge-container">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/10 text-violet-400 border border-violet-500/20 light:bg-violet-50 light:text-violet-600">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+              Procesamiento Local Seguro
+            </span>
+          </div>
+        </div>
+
+        <!-- Main Body -->
+        <div id="tool-workspace" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <!-- Upload Area (Cols 2/3 if empty) -->
+          <div id="workspace-main" class="lg:col-span-2 space-y-6">
+            <div id="upload-zone-container" class="rounded-2xl border-2 border-dashed border-zinc-800 hover:border-zinc-700 bg-zinc-950/20 py-16 px-6 text-center transition-all duration-300 light:border-zinc-200 light:bg-zinc-50/50">
+              <div class="flex flex-col items-center gap-4 max-w-sm mx-auto">
+                <div class="w-14 h-14 rounded-2xl bg-zinc-900 flex items-center justify-center text-neutral-400 shadow-inner light:bg-zinc-100">
+                  <i data-lucide="upload-cloud" class="w-7 h-7"></i>
+                </div>
+                <div class="space-y-1">
+                  <h3 class="text-sm font-semibold text-white light:text-zinc-900">Arrastra tus imágenes aquí</h3>
+                  <p class="text-xs text-neutral-400 light:text-zinc-500">o haz clic para explorar en tu equipo</p>
+                </div>
+                <p class="text-[10px] text-neutral-500 leading-none">Formatos soportados: JPG, PNG, WEBP, GIF, BMP, TIFF</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Options Sidebar (Col 1/3) -->
+          <div id="workspace-sidebar" class="bg-zinc-900/40 border border-white/5 rounded-2xl p-5 space-y-5 shadow-sm light:bg-white light:border-zinc-200">
+            <h3 class="text-sm font-bold text-white border-b border-zinc-950 pb-2 light:text-zinc-950 light:border-zinc-100 flex items-center gap-2">
+              <i data-lucide="settings-2" class="w-4 h-4 text-violet-400"></i>
+              Configuración
+            </h3>
+            
+            <div id="sidebar-controls" class="text-xs text-neutral-400 light:text-zinc-500 py-6 text-center">
+              Selecciona una imagen para configurar las opciones.
+            </div>
+
+            <!-- Trigger Button -->
+            <button id="process-btn" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:scale-98 text-white font-semibold text-xs transition-all shadow-lg shadow-violet-500/10 cursor-not-allowed opacity-50 flex items-center justify-center gap-2" disabled>
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              Procesar Imágenes
+            </button>
+            
+            <div id="progress-container"></div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+
+    // Initialize drag drop area
+    DragDropArea.init({
+      containerId: 'upload-zone-container',
+      accept: ['image/*'],
+      multiple: toolId !== 'crop-image', // Single file for crop
+      onFilesSelected: (selectedFiles) => this.handleFilesSelected(selectedFiles)
+    });
+  },
+
+  /**
+   * Reset local state
+   */
+  resetState() {
+    this.files = [];
+    this.selectedFileIdx = 0;
+    this.cleanComparisonUrls();
+    this.destroyCropper();
+    this.settings = {
+      quality: 0.8,
+      width: null,
+      height: null,
+      maintainAspectRatio: true,
+      scalePercent: 100,
+      rotation: 0,
+      flipH: false,
+      flipV: false,
+      cropAspectRatio: NaN
+    };
+  },
+
+  /**
+   * Clean object urls
+   */
+  cleanComparisonUrls() {
+    if (this.comparisonData.originalUrl) {
+      URL.revokeObjectURL(this.comparisonData.originalUrl);
+    }
+    if (this.comparisonData.processedUrl) {
+      URL.revokeObjectURL(this.comparisonData.processedUrl);
+    }
+    this.comparisonData = {
+      originalUrl: null,
+      processedUrl: null,
+      originalSize: null,
+      processedSize: null
+    };
+  },
+
+  /**
+   * Get metadata titles/descriptions
+   */
+  getToolMeta(toolId) {
+    const meta = {
+      'compress-image': {
+        title: 'Comprimir Imagen',
+        description: 'Optimiza el peso de tus imágenes reduciendo su tamaño de almacenamiento sin pérdidas visuales notables en el navegador.'
+      },
+      'resize-image': {
+        title: 'Cambiar Tamaño de Imagen',
+        description: 'Redimensiona tus imágenes especificando un tamaño exacto en píxeles o aplicando un porcentaje de escala general.'
+      },
+      'crop-image': {
+        title: 'Recortar Imagen',
+        description: 'Encuadra tus fotos de forma visual recortando regiones seleccionadas. Admite relaciones de aspecto estándar.'
+      },
+      'rotate-image': {
+        title: 'Rotar y Voltear Imagen',
+        description: 'Rota tus fotos 90, 180 o 270 grados en sentido horario, u horizontal/vertical para efectos espejo.'
+      },
+      'jpg-to-png': {
+        title: 'Convertir JPG a PNG',
+        description: 'Convierte rápidamente imágenes en formato JPG o JPEG a formato PNG.'
+      },
+      'png-to-jpg': {
+        title: 'Convertir PNG a JPG',
+        description: 'Convierte imágenes en formato PNG a formato JPG con fondo de color blanco opaco.'
+      },
+      'webp-convert': {
+        title: 'Convertir imágenes a WEBP',
+        description: 'Convierte tus archivos de imágenes (PNG o JPG) al formato optimizado de Google, WEBP.'
+      }
+    };
+    return meta[toolId] || { title: 'Herramienta de Imagen', description: 'Edición de imágenes local' };
+  },
+
+  /**
+   * File selection logic
+   */
+  handleFilesSelected(selectedFiles) {
+    // Check files size/types
+    const validFiles = selectedFiles.filter(file => {
+      const isImg = file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|gif|bmp|tiff)$/i.test(file.name);
+      if (!isImg) {
+        Toast.show(`El archivo "${file.name}" no es una imagen válida.`, 'error');
+        return false;
+      }
+      // limit 30MB
+      if (file.size > 30 * 1024 * 1024) {
+        Toast.show(`El archivo "${file.name}" excede el límite de 30MB.`, 'error');
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+
+    if (this.toolId === 'crop-image') {
+      // Crop only supports 1 file
+      this.files = [validFiles[0]];
+      this.selectedFileIdx = 0;
+    } else {
+      this.files = [...this.files, ...validFiles];
+    }
+
+    this.renderWorkArea();
+  },
+
+  /**
+   * Draw the visual workspace showing uploaded file lists or cropper
+   */
+  renderWorkArea() {
+    const mainArea = document.getElementById('workspace-main');
+    if (!mainArea) return;
+
+    if (this.files.length === 0) {
+      this.render(document.getElementById('app'), this.toolId);
+      return;
+    }
+
+    // Header layout: File grid preview or Cropper Canvas
+    if (this.toolId === 'crop-image') {
+      const file = this.files[0];
+      const objectUrl = URL.createObjectURL(file);
+      
+      mainArea.innerHTML = `
+        <div class="space-y-4">
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 flex items-center justify-center overflow-hidden max-h-[50vh] light:bg-zinc-50 light:border-zinc-200">
+            <img id="cropper-target" src="${objectUrl}" class="max-w-full max-h-[45vh]" style="display: block;">
+          </div>
+          <div class="flex items-center justify-between text-xs text-neutral-400 light:text-zinc-500">
+            <span>Archivo: <strong>${file.name}</strong></span>
+            <span>Dimensiones: <strong id="orig-dims">Detectando...</strong></span>
+          </div>
+        </div>
+      `;
+
+      // Initialize cropper
+      setTimeout(() => {
+        const image = document.getElementById('cropper-target');
+        if (!image) return;
+
+        // Detect dimensions
+        const imgObj = new Image();
+        imgObj.onload = () => {
+          const origDims = document.getElementById('orig-dims');
+          if (origDims) origDims.textContent = `${imgObj.naturalWidth} x ${imgObj.naturalHeight} px`;
+        };
+        imgObj.src = objectUrl;
+
+        this.cropperInstance = new window.Cropper(image, {
+          aspectRatio: this.settings.cropAspectRatio,
+          viewMode: 1,
+          background: false,
+          autoCropArea: 0.8,
+          ready: () => {
+            // Cropper ready
+          }
+        });
+      }, 50);
+
+    } else {
+      // Multi-file tools
+      const selectedFile = this.files[this.selectedFileIdx];
+      const objectUrl = URL.createObjectURL(selectedFile);
+
+      mainArea.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Files List -->
+          <div class="space-y-4">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-neutral-500 light:text-zinc-400">Archivos Cargados</h4>
+            <div id="uploaded-files-list"></div>
+            
+            <button id="add-more-btn" class="w-full py-2.5 rounded-xl border border-dashed border-zinc-800 hover:border-zinc-700 bg-zinc-950/20 text-xs font-semibold text-neutral-400 hover:text-white transition-all light:border-zinc-200 light:bg-zinc-50 light:hover:border-zinc-300 light:text-zinc-600 light:hover:text-zinc-900">
+              + Añadir más imágenes
+            </button>
+          </div>
+
+          <!-- Active Preview -->
+          <div class="space-y-4">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-neutral-500 light:text-zinc-400">Vista Previa</h4>
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 flex flex-col items-center justify-center gap-3 h-[250px] relative overflow-hidden light:bg-zinc-50 light:border-zinc-200">
+              <img id="preview-image" src="${objectUrl}" class="max-w-full max-h-[190px] object-contain rounded-lg transition-transform duration-200" alt="Preview">
+              <span id="preview-name" class="text-xs font-semibold text-neutral-400 truncate w-full text-center px-4 light:text-zinc-600">${selectedFile.name}</span>
+            </div>
+            
+            <div id="comparison-result-area" class="hidden">
+              <!-- Dynamically rendered compress stats and comparison trigger -->
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Set scale / transforms in preview if rotate tool
+      if (this.toolId === 'rotate-image') {
+        this.updatePreviewTransforms();
+      }
+
+      // Render file list component
+      FileList.render(this.files, 'uploaded-files-list', (idx) => this.handleRemoveFile(idx));
+
+      // Make file cards clickable to switch selection
+      const cards = mainArea.querySelectorAll('[data-file-idx]');
+      cards.forEach(card => {
+        const idx = parseInt(card.getAttribute('data-file-idx'));
+        if (idx === this.selectedFileIdx) {
+          card.classList.add('border-violet-500/40', 'bg-violet-500/5', 'light:border-violet-500/40', 'light:bg-violet-50/50');
+        }
+        card.style.cursor = 'pointer';
+        card.onclick = (e) => {
+          if (e.target.closest('.remove-file-btn')) return; // ignore delete click
+          this.selectedFileIdx = idx;
+          this.cleanComparisonUrls();
+          this.renderWorkArea();
+        };
+      });
+
+      // Bind add more files button
+      const addMoreBtn = document.getElementById('add-more-btn');
+      DragDropArea.init({
+        containerId: 'add-more-btn',
+        accept: ['image/*'],
+        multiple: true,
+        onFilesSelected: (newFiles) => this.handleFilesSelected(newFiles)
+      });
+      
+      // Auto detect target resize dimensions if needed
+      if (this.toolId === 'resize-image' && (this.settings.width === null || this.settings.height === null)) {
+        const img = new Image();
+        img.onload = () => {
+          this.settings.width = img.naturalWidth;
+          this.settings.height = img.naturalHeight;
+          this.renderSidebarControls();
+        };
+        img.src = objectUrl;
+      }
+    }
+
+    // Set action button enabled
+    const procBtn = document.getElementById('process-btn');
+    procBtn.disabled = false;
+    procBtn.className = "w-full py-3 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:scale-98 text-white font-semibold text-xs transition-all shadow-lg shadow-violet-500/10 cursor-pointer flex items-center justify-center gap-2";
+
+    this.renderSidebarControls();
+    this.bindProcessAction();
+  },
+
+  /**
+   * Rotation preview styling helper
+   */
+  updatePreviewTransforms() {
+    const previewImg = document.getElementById('preview-image');
+    if (!previewImg) return;
+    
+    let transform = `rotate(${this.settings.rotation}deg)`;
+    if (this.settings.flipH) transform += ' scaleX(-1)';
+    if (this.settings.flipV) transform += ' scaleY(-1)';
+    previewImg.style.transform = transform;
+  },
+
+  /**
+   * Remove a file from queue
+   */
+  handleRemoveFile(idx) {
+    this.files.splice(idx, 1);
+    
+    if (this.files.length === 0) {
+      this.resetState();
+      this.render(document.getElementById('app'), this.toolId);
+      return;
+    }
+    
+    // adjust selected index bounds
+    if (this.selectedFileIdx >= this.files.length) {
+      this.selectedFileIdx = this.files.length - 1;
+    }
+    this.cleanComparisonUrls();
+    this.renderWorkArea();
+  },
+
+  /**
+   * Render settings options in the sidebar
+   */
+  renderSidebarControls() {
+    const container = document.getElementById('sidebar-controls');
+    if (!container) return;
+
+    if (this.toolId === 'compress-image') {
+      const percentage = Math.round(this.settings.quality * 100);
+      container.innerHTML = `
+        <div class="space-y-4 text-left">
+          <div class="flex justify-between items-center text-xs font-semibold">
+            <span class="text-white light:text-zinc-950">Calidad de Compresión</span>
+            <span class="text-violet-400 font-bold" id="quality-val">${percentage}%</span>
+          </div>
+          <input 
+            type="range" 
+            min="10" 
+            max="100" 
+            value="${percentage}" 
+            class="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-violet-500 light:bg-zinc-200"
+            id="quality-slider"
+          >
+          <div class="flex justify-between text-[10px] text-neutral-500">
+            <span>Peso Mínimo (Baja calidad)</span>
+            <span>Máxima Calidad</span>
+          </div>
+        </div>
+      `;
+
+      const slider = document.getElementById('quality-slider');
+      slider.oninput = (e) => {
+        const val = parseInt(e.target.value);
+        document.getElementById('quality-val').textContent = `${val}%`;
+        this.settings.quality = val / 100;
+      };
+
+    } else if (this.toolId === 'resize-image') {
+      container.innerHTML = `
+        <div class="space-y-4 text-left">
+          <!-- Width & Height inputs -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-[11px] font-semibold text-neutral-400 light:text-zinc-600">Ancho (px)</label>
+              <input 
+                type="number" 
+                id="resize-w" 
+                value="${this.settings.width || ''}" 
+                placeholder="px"
+                class="w-full p-2 bg-zinc-950 border border-zinc-800 rounded-lg focus:outline-none focus:border-violet-500 light:bg-zinc-50 light:border-zinc-200 light:text-zinc-950 font-mono text-center"
+              >
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-[11px] font-semibold text-neutral-400 light:text-zinc-600">Alto (px)</label>
+              <input 
+                type="number" 
+                id="resize-h" 
+                value="${this.settings.height || ''}" 
+                placeholder="px"
+                class="w-full p-2 bg-zinc-950 border border-zinc-800 rounded-lg focus:outline-none focus:border-violet-500 light:bg-zinc-50 light:border-zinc-200 light:text-zinc-950 font-mono text-center"
+              >
+            </div>
+          </div>
+
+          <!-- Lock Aspect Ratio -->
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input 
+              type="checkbox" 
+              id="resize-ratio" 
+              ${this.settings.maintainAspectRatio ? 'checked' : ''}
+              class="w-4 h-4 rounded border-zinc-800 accent-violet-500 cursor-pointer"
+            >
+            <span class="text-[11px] font-medium text-neutral-300 light:text-zinc-600">Mantener relación de aspecto</span>
+          </label>
+
+          <!-- Percentage Scale shortcuts -->
+          <div class="space-y-1.5 pt-2">
+            <label class="text-[11px] font-semibold text-neutral-400 light:text-zinc-600">Escala de porcentaje</label>
+            <div class="grid grid-cols-4 gap-1.5">
+              <button class="scale-btn py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950 hover:bg-zinc-900 font-semibold transition-all light:border-zinc-200 light:bg-zinc-50 light:hover:bg-zinc-100" data-pct="25">25%</button>
+              <button class="scale-btn py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950 hover:bg-zinc-900 font-semibold transition-all light:border-zinc-200 light:bg-zinc-50 light:hover:bg-zinc-100" data-pct="50">50%</button>
+              <button class="scale-btn py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950 hover:bg-zinc-900 font-semibold transition-all light:border-zinc-200 light:bg-zinc-50 light:hover:bg-zinc-100" data-pct="75">75%</button>
+              <button class="scale-btn py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-950 hover:bg-zinc-900 font-semibold transition-all light:border-zinc-200 light:bg-zinc-50 light:hover:bg-zinc-100" data-pct="100">100%</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const inputW = document.getElementById('resize-w');
+      const inputH = document.getElementById('resize-h');
+      const checkRatio = document.getElementById('resize-ratio');
+      const scaleBtns = container.querySelectorAll('.scale-btn');
+
+      // Load original image dimensions cache for aspect calculations
+      const activeFile = this.files[this.selectedFileIdx];
+      const img = new Image();
+      let origW = 0, origH = 0;
+      img.onload = () => {
+        origW = img.naturalWidth;
+        origH = img.naturalHeight;
+      };
+      img.src = URL.createObjectURL(activeFile);
+
+      inputW.oninput = (e) => {
+        const val = parseInt(e.target.value) || 0;
+        this.settings.width = val;
+        
+        if (this.settings.maintainAspectRatio && origW && origH && val > 0) {
+          const h = Math.round((val * origH) / origW);
+          this.settings.height = h;
+          inputH.value = h;
+        }
+      };
+
+      inputH.oninput = (e) => {
+        const val = parseInt(e.target.value) || 0;
+        this.settings.height = val;
+        
+        if (this.settings.maintainAspectRatio && origW && origH && val > 0) {
+          const w = Math.round((val * origW) / origH);
+          this.settings.width = w;
+          inputW.value = w;
+        }
+      };
+
+      checkRatio.onchange = (e) => {
+        this.settings.maintainAspectRatio = e.target.checked;
+        if (this.settings.maintainAspectRatio && origW && origH && this.settings.width > 0) {
+          // Snap height to match aspect
+          const h = Math.round((this.settings.width * origH) / origW);
+          this.settings.height = h;
+          inputH.value = h;
+        }
+      };
+
+      scaleBtns.forEach(btn => {
+        btn.onclick = () => {
+          const pct = parseInt(btn.getAttribute('data-pct'));
+          this.settings.scalePercent = pct;
+          if (origW && origH) {
+            const w = Math.round((origW * pct) / 100);
+            const h = Math.round((origH * pct) / 100);
+            this.settings.width = w;
+            this.settings.height = h;
+            inputW.value = w;
+            inputH.value = h;
+          }
+        };
+      });
+
+    } else if (this.toolId === 'crop-image') {
+      container.innerHTML = `
+        <div class="space-y-4 text-left">
+          <label class="text-[11px] font-semibold text-neutral-400 light:text-zinc-600">Relación de Aspecto</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="aspect-btn py-2 px-3 rounded-xl border border-zinc-800 bg-zinc-950 font-semibold hover:border-violet-500 transition-all light:border-zinc-200 light:bg-zinc-50 light:hover:border-zinc-300" data-aspect="free">Libre</button>
+            <button class="aspect-btn py-2 px-3 rounded-xl border border-zinc-800 bg-zinc-950 font-semibold hover:border-violet-500 transition-all light:border-zinc-200 light:bg-zinc-50 light:hover:border-zinc-300" data-aspect="1:1">1:1 (Cuadrado)</button>
+            <button class="aspect-btn py-2 px-3 rounded-xl border border-zinc-800 bg-zinc-950 font-semibold hover:border-violet-500 transition-all light:border-zinc-200 light:bg-zinc-50 light:hover:border-zinc-300" data-aspect="16:9">16:9 (HD)</button>
+            <button class="aspect-btn py-2 px-3 rounded-xl border border-zinc-800 bg-zinc-950 font-semibold hover:border-violet-500 transition-all light:border-zinc-200 light:bg-zinc-50 light:hover:border-zinc-300" data-aspect="4:3">4:3 (Estándar)</button>
+          </div>
+        </div>
+      `;
+
+      // Set active outline to selected aspect button
+      const aspectButtons = container.querySelectorAll('.aspect-btn');
+      const highlightActiveAspect = () => {
+        aspectButtons.forEach(b => {
+          const asp = b.getAttribute('data-aspect');
+          const isActive = (asp === 'free' && isNaN(this.settings.cropAspectRatio)) ||
+                           (asp === '1:1' && this.settings.cropAspectRatio === 1) ||
+                           (asp === '16:9' && Math.abs(this.settings.cropAspectRatio - 1.7777) < 0.01) ||
+                           (asp === '4:3' && Math.abs(this.settings.cropAspectRatio - 1.3333) < 0.01);
+          
+          if (isActive) {
+            b.className = "aspect-btn py-2 px-3 rounded-xl border border-violet-500 bg-violet-500/5 text-violet-400 font-bold transition-all light:bg-violet-50";
+          } else {
+            b.className = "aspect-btn py-2 px-3 rounded-xl border border-zinc-800 bg-zinc-950 text-neutral-300 font-semibold hover:border-zinc-700 transition-all light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600";
+          }
+        });
+      };
+      highlightActiveAspect();
+
+      aspectButtons.forEach(btn => {
+        btn.onclick = () => {
+          const aspect = btn.getAttribute('data-aspect');
+          let val = NaN;
+          if (aspect === '1:1') val = 1;
+          else if (aspect === '16:9') val = 16 / 9;
+          else if (aspect === '4:3') val = 4 / 3;
+          
+          this.settings.cropAspectRatio = val;
+          highlightActiveAspect();
+
+          if (this.cropperInstance) {
+            this.cropperInstance.setAspectRatio(val);
+          }
+        };
+      });
+
+    } else if (this.toolId === 'rotate-image') {
+      container.innerHTML = `
+        <div class="space-y-4 text-left">
+          <div class="space-y-1.5">
+            <label class="text-[11px] font-semibold text-neutral-400 light:text-zinc-600">Girar Imagen</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="rot-left-btn" class="p-2.5 rounded-xl border border-zinc-800 hover:border-zinc-700 bg-zinc-950 flex items-center justify-center gap-1.5 font-semibold text-neutral-300 transition-all light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600" title="Rotar 90° antihorario">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                -90°
+              </button>
+              <button id="rot-right-btn" class="p-2.5 rounded-xl border border-zinc-800 hover:border-zinc-700 bg-zinc-950 flex items-center justify-center gap-1.5 font-semibold text-neutral-300 transition-all light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600" title="Rotar 90° horario">
+                <i data-lucide="rotate-cw" class="w-4 h-4"></i>
+                +90°
+              </button>
+            </div>
+          </div>
+          
+          <div class="space-y-1.5">
+            <label class="text-[11px] font-semibold text-neutral-400 light:text-zinc-600">Voltear (Efecto Espejo)</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="flip-h-btn" class="p-2.5 rounded-xl border border-zinc-800 bg-zinc-950 flex items-center justify-center gap-1.5 font-semibold transition-all light:border-zinc-200 light:bg-zinc-50" title="Voltear horizontalmente">
+                <i data-lucide="flip-horizontal" class="w-4 h-4"></i>
+                Horizontal
+              </button>
+              <button id="flip-v-btn" class="p-2.5 rounded-xl border border-zinc-800 bg-zinc-950 flex items-center justify-center gap-1.5 font-semibold transition-all light:border-zinc-200 light:bg-zinc-50" title="Voltear verticalmente">
+                <i data-lucide="flip-vertical" class="w-4 h-4"></i>
+                Vertical
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      if (window.lucide) window.lucide.createIcons();
+
+      const btnRotL = document.getElementById('rot-left-btn');
+      const btnRotR = document.getElementById('rot-right-btn');
+      const btnFlipH = document.getElementById('flip-h-btn');
+      const btnFlipV = document.getElementById('flip-v-btn');
+
+      const highlightFlips = () => {
+        btnFlipH.className = `p-2.5 rounded-xl border flex items-center justify-center gap-1.5 font-semibold transition-all ${
+          this.settings.flipH 
+            ? 'border-violet-500 bg-violet-500/5 text-violet-400' 
+            : 'border-zinc-800 bg-zinc-950 text-neutral-300 light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600'
+        }`;
+        btnFlipV.className = `p-2.5 rounded-xl border flex items-center justify-center gap-1.5 font-semibold transition-all ${
+          this.settings.flipV 
+            ? 'border-violet-500 bg-violet-500/5 text-violet-400' 
+            : 'border-zinc-800 bg-zinc-950 text-neutral-300 light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600'
+        }`;
+      };
+      highlightFlips();
+
+      btnRotL.onclick = () => {
+        this.settings.rotation = (this.settings.rotation - 90 + 360) % 360;
+        this.updatePreviewTransforms();
+      };
+      btnRotR.onclick = () => {
+        this.settings.rotation = (this.settings.rotation + 90) % 360;
+        this.updatePreviewTransforms();
+      };
+      btnFlipH.onclick = () => {
+        this.settings.flipH = !this.settings.flipH;
+        highlightFlips();
+        this.updatePreviewTransforms();
+      };
+      btnFlipV.onclick = () => {
+        this.settings.flipV = !this.settings.flipV;
+        highlightFlips();
+        this.updatePreviewTransforms();
+      };
+
+    } else {
+      // Conversion formats (JPG to PNG, PNG to JPG, Convert WEBP)
+      let targetFmt = 'PNG';
+      if (this.toolId === 'png-to-jpg') targetFmt = 'JPG';
+      else if (this.toolId === 'webp-convert') targetFmt = 'WEBP';
+      
+      container.innerHTML = `
+        <div class="space-y-3 text-left">
+          <p class="text-[11px] text-neutral-400 light:text-zinc-600 leading-normal">
+            No se requieren parámetros adicionales. El archivo se convertirá directamente a formato <strong class="text-violet-400 font-bold">${targetFmt}</strong>.
+          </p>
+        </div>
+      `;
+    }
+  },
+
+  /**
+   * Bind the Process & Download action button click
+   */
+  bindProcessAction() {
+    const processBtn = document.getElementById('process-btn');
+    if (!processBtn) return;
+
+    processBtn.onclick = async () => {
+      if (this.files.length === 0) return;
+      
+      ProgressBar.clear('progress-container');
+      processBtn.disabled = true;
+      processBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      try {
+        const toolMeta = this.getToolMeta(this.toolId);
+        
+        // Determine output format
+        let outFormat = 'image/jpeg';
+        let outExt = 'jpg';
+        
+        if (this.toolId === 'jpg-to-png' || this.toolId === 'crop-image') {
+          outFormat = 'image/png';
+          outExt = 'png';
+        } else if (this.toolId === 'webp-convert') {
+          outFormat = 'image/webp';
+          outExt = 'webp';
+        } else if (this.toolId === 'compress-image') {
+          // Keep original or convert to JPG
+          const activeType = this.files[this.selectedFileIdx].type;
+          outFormat = activeType === 'image/png' ? 'image/png' : activeType === 'image/webp' ? 'image/webp' : 'image/jpeg';
+          outExt = outFormat.split('/')[1];
+        } else if (this.toolId === 'resize-image' || this.toolId === 'rotate-image') {
+          const activeType = this.files[this.selectedFileIdx].type;
+          outFormat = activeType;
+          outExt = outFormat.split('/')[1];
+        }
+
+        // Single crop flow
+        if (this.toolId === 'crop-image') {
+          ProgressBar.render('progress-container', 30, 'Recortando imagen...');
+          
+          if (!this.cropperInstance) {
+            throw new Error('El recortador Cropper no está listo');
+          }
+
+          // Get cropped canvas
+          const croppedCanvas = this.cropperInstance.getCroppedCanvas({
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high'
+          });
+
+          if (!croppedCanvas) {
+            throw new Error('No se pudo generar el lienzo recortado');
+          }
+
+          ProgressBar.render('progress-container', 70, 'Exportando resultado...');
+
+          croppedCanvas.toBlob(async (blob) => {
+            if (!blob) {
+              throw new Error('Error al guardar el lienzo recortado como archivo');
+            }
+            
+            const origFile = this.files[0];
+            const outName = Helpers.appendSuffix(Helpers.changeExtension(origFile.name, outExt), '-crop');
+            
+            // Download
+            Helpers.triggerDownload(blob, outName);
+            ProgressBar.render('progress-container', 100, '¡Completado!');
+            
+            // History
+            HistoryManager.addEntry({
+              toolId: this.toolId,
+              toolName: toolMeta.title,
+              fileName: outName,
+              originalSize: origFile.size,
+              finalSize: blob.size
+            });
+
+            Toast.show('Imagen recortada descargada con éxito.');
+            
+            // Enable button
+            processBtn.disabled = false;
+            processBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            
+            // Short delay clear progress
+            setTimeout(() => ProgressBar.clear('progress-container'), 1500);
+
+          }, outFormat);
+
+          return;
+        }
+
+        // Batch processing flow
+        const processedFiles = [];
+        let totalOriginalSize = 0;
+        let totalFinalSize = 0;
+
+        for (let i = 0; i < this.files.length; i++) {
+          const file = this.files[i];
+          const pct = Math.round((i / this.files.length) * 100);
+          ProgressBar.render('progress-container', pct, `Procesando: ${file.name}...`);
+
+          // 1. Create HTML Image from File
+          const img = await Helpers.fileToImage(file);
+
+          // 2. Perform transformations
+          const opts = {
+            format: outFormat,
+            quality: this.settings.quality,
+            rotation: this.settings.rotation,
+            flipH: this.settings.flipH,
+            flipV: this.settings.flipV
+          };
+
+          if (this.toolId === 'resize-image') {
+            opts.width = this.settings.width;
+            opts.height = this.settings.height;
+          }
+
+          const outBlob = await ImageProcessor.processImage(img, opts);
+          
+          let suffix = '-convert';
+          if (this.toolId === 'compress-image') suffix = '-min';
+          else if (this.toolId === 'resize-image') suffix = '-resize';
+          else if (this.toolId === 'rotate-image') suffix = '-rotate';
+
+          const outName = Helpers.appendSuffix(Helpers.changeExtension(file.name, outExt), suffix);
+
+          processedFiles.push({
+            name: outName,
+            blob: outBlob,
+            originalSize: file.size,
+            finalSize: outBlob.size
+          });
+
+          totalOriginalSize += file.size;
+          totalFinalSize += outBlob.size;
+        }
+
+        ProgressBar.render('progress-container', 90, 'Descargando archivos...');
+
+        // Save result references to show preview comparison if compressing and single file selected
+        if (this.toolId === 'compress-image' && this.files.length === 1) {
+          const result = processedFiles[0];
+          this.comparisonData.originalUrl = URL.createObjectURL(this.files[0]);
+          this.comparisonData.processedUrl = URL.createObjectURL(result.blob);
+          this.comparisonData.originalSize = result.originalSize;
+          this.comparisonData.processedSize = result.finalSize;
+
+          this.renderComparisonResultArea();
+        }
+
+        // Download dispatch
+        if (processedFiles.length === 1) {
+          Helpers.triggerDownload(processedFiles[0].blob, processedFiles[0].name);
+          Toast.show('Imagen procesada descargada con éxito.');
+        } else {
+          // Multiple download ZIP
+          const zipName = `PDFito_${this.toolId}_${Date.now()}.zip`;
+          await Helpers.downloadAsZip(processedFiles, zipName);
+          Toast.show(`Descargado archivo ZIP con ${processedFiles.length} imágenes.`);
+        }
+
+        ProgressBar.render('progress-container', 100, '¡Completado!');
+
+        // Add history entry
+        const historyName = processedFiles.length === 1 
+          ? processedFiles[0].name 
+          : `${processedFiles.length} imágenes procesadas`;
+        
+        HistoryManager.addEntry({
+          toolId: this.toolId,
+          toolName: toolMeta.title,
+          fileName: historyName,
+          originalSize: totalOriginalSize,
+          finalSize: totalFinalSize
+        });
+
+      } catch (err) {
+        console.error(err);
+        Toast.show(`Error al procesar: ${err.message}`, 'error');
+        ProgressBar.clear('progress-container');
+      } finally {
+        processBtn.disabled = false;
+        processBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        
+        // Remove progress bar after brief delay
+        setTimeout(() => ProgressBar.clear('progress-container'), 2000);
+      }
+    };
+  },
+
+  /**
+   * Render the compression details stats block with the interactive comparison modal button
+   */
+  renderComparisonResultArea() {
+    const area = document.getElementById('comparison-result-area');
+    if (!area) return;
+
+    const origFormatted = Helpers.formatBytes(this.comparisonData.originalSize);
+    const procFormatted = Helpers.formatBytes(this.comparisonData.processedSize);
+    
+    // Calculate percentage difference
+    const diffBytes = this.comparisonData.originalSize - this.comparisonData.processedSize;
+    const savingPct = Math.round((diffBytes / this.comparisonData.originalSize) * 100);
+    
+    const savingText = savingPct > 0 
+      ? `Ahorraste un <strong class="text-emerald-400 font-bold">${savingPct}%</strong> de almacenamiento.` 
+      : 'La imagen optimizada tiene un tamaño similar.';
+
+    area.className = "p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-3.5 mt-2 light:bg-zinc-50 light:border-zinc-200 block transition-all";
+    area.innerHTML = `
+      <div class="space-y-1.5 text-xs text-neutral-400 light:text-zinc-600">
+        <div class="flex justify-between">
+          <span>Tamaño Original:</span>
+          <span class="font-mono font-medium text-white light:text-zinc-950">${origFormatted}</span>
+        </div>
+        <div class="flex justify-between border-b border-zinc-900 pb-2 light:border-zinc-200/50">
+          <span>Tamaño Comprimido:</span>
+          <span class="font-mono font-bold text-violet-400">${procFormatted}</span>
+        </div>
+        <p class="text-[11px] leading-tight pt-1">${savingText}</p>
+      </div>
+
+      <button id="compare-btn" class="w-full py-2.5 rounded-xl border border-violet-500/30 hover:border-violet-500 bg-violet-500/5 text-violet-400 hover:text-violet-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+        <i data-lucide="split" class="w-4 h-4"></i>
+        Comparar Original vs Comprimida
+      </button>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+
+    const compareBtn = document.getElementById('compare-btn');
+    compareBtn.onclick = () => {
+      ComparisonModal.show(
+        this.comparisonData.originalUrl,
+        this.comparisonData.processedUrl,
+        `Original (${origFormatted})`,
+        `Comprimida (${procFormatted} -${savingPct}%)`
+      );
+    };
+  },
+
+  /**
+   * Destroy visual cropper instance
+   */
+  destroyCropper() {
+    if (this.cropperInstance) {
+      this.cropperInstance.destroy();
+      this.cropperInstance = null;
+    }
+  }
+};
+
+
+/* --- js\ui\pdfTools.js --- */
+/**
+ * PDF Tools View Controller for PDFito
+ * Manages all PDF operations: Merging, Splitting, Page Extraction, Ordering & Rotation, and Images to PDF.
+ */
+
+
+
+
+
+
+const PdfToolsView = {
+  toolId: null,
+  
+  // Multi-file tools data (Merge PDF, Images to PDF)
+  files: [],
+  
+  // Single-file tools data (Split, Extract, Organize)
+  singleFile: null,
+  singlePdfBytes: null, // Uint8Array
+  pagesConfig: [], // Array of { index: number, rotation: number, selected: boolean, thumbnailCanvas: HTMLCanvasElement }
+
+  // Sidebar Settings
+  settings: {
+    // Images to PDF
+    pageSize: 'fit', // 'fit', 'a4', 'letter'
+    orientation: 'portrait', // 'portrait', 'landscape'
+    margin: 0, // 0, 10, 20
+    
+    // Split PDF
+    splitMode: 'all', // 'all' (every page), 'range' (custom range)
+    splitRange: '1-3'
+  },
+
+  /**
+   * Render the tool workspace.
+   * @param {HTMLElement} container - App mount container.
+   * @param {string} toolId - Active tool identifier.
+   */
+  render(container, toolId) {
+    this.toolId = toolId;
+    this.resetState();
+
+    const toolMeta = this.getToolMeta(toolId);
+
+    container.innerHTML = `
+      <div class="space-y-6 page-enter max-w-5xl mx-auto">
+        <!-- Back and Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-900 pb-5 light:border-zinc-100">
+          <div class="space-y-1">
+            <a href="#dashboard" class="inline-flex items-center gap-1 text-xs font-semibold text-neutral-400 hover:text-white transition-colors light:text-zinc-500 light:hover:text-zinc-950 mb-1">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+              Volver al panel
+            </a>
+            <h2 class="text-2xl font-extrabold text-white light:text-zinc-950">${toolMeta.title}</h2>
+            <p class="text-xs text-neutral-400 light:text-zinc-500 max-w-xl">${toolMeta.description}</p>
+          </div>
+          
+          <div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/10 text-violet-400 border border-violet-500/20 light:bg-violet-50 light:text-violet-600">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+              Procesamiento Local Seguro
+            </span>
+          </div>
+        </div>
+
+        <!-- Main Workspace -->
+        <div id="tool-workspace" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          
+          <!-- Interactive Board -->
+          <div id="workspace-main" class="lg:col-span-2 space-y-6">
+            <div id="upload-zone-container" class="rounded-2xl border-2 border-dashed border-zinc-800 hover:border-zinc-700 bg-zinc-950/20 py-16 px-6 text-center transition-all duration-300 light:border-zinc-200 light:bg-zinc-50/50">
+              <div class="flex flex-col items-center gap-4 max-w-sm mx-auto">
+                <div class="w-14 h-14 rounded-2xl bg-zinc-900 flex items-center justify-center text-neutral-400 shadow-inner light:bg-zinc-100">
+                  <i data-lucide="upload-cloud" class="w-7 h-7"></i>
+                </div>
+                <div class="space-y-1">
+                  <h3 class="text-sm font-semibold text-white light:text-zinc-900">Arrastra tus archivos aquí</h3>
+                  <p class="text-xs text-neutral-400 light:text-zinc-500">o haz clic para explorar en tu equipo</p>
+                </div>
+                <p class="text-[10px] text-neutral-500 leading-none" id="formats-label">Formatos soportados: PDF</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls Sidebar -->
+          <div id="workspace-sidebar" class="bg-zinc-900/40 border border-white/5 rounded-2xl p-5 space-y-5 shadow-sm light:bg-white light:border-zinc-200">
+            <h3 class="text-sm font-bold text-white border-b border-zinc-950 pb-2 light:text-zinc-950 light:border-zinc-100 flex items-center gap-2">
+              <i data-lucide="settings-2" class="w-4 h-4 text-violet-400"></i>
+              Configuración
+            </h3>
+            
+            <div id="sidebar-controls" class="text-xs text-neutral-400 light:text-zinc-500 py-6 text-center">
+              Carga archivos para comenzar.
+            </div>
+
+            <!-- Trigger Button -->
+            <button id="process-btn" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:scale-98 text-white font-semibold text-xs transition-all shadow-lg shadow-violet-500/10 cursor-not-allowed opacity-50 flex items-center justify-center gap-2" disabled>
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              Generar Documento
+            </button>
+            
+            <div id="progress-container"></div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+
+    // Set formats label based on tool
+    const isImgToPdf = toolId === 'images-to-pdf';
+    const label = document.getElementById('formats-label');
+    if (label) {
+      label.textContent = isImgToPdf 
+        ? 'Formatos soportados: JPG, PNG, WEBP, GIF' 
+        : 'Formatos soportados: PDF';
+    }
+
+    // Initialize drag drop area
+    DragDropArea.init({
+      containerId: 'upload-zone-container',
+      accept: isImgToPdf ? ['image/*'] : ['.pdf', 'application/pdf'],
+      multiple: toolId !== 'split-pdf' && toolId !== 'extract-pages-pdf' && toolId !== 'organize-pdf',
+      onFilesSelected: (selectedFiles) => this.handleFilesSelected(selectedFiles)
+    });
+  },
+
+  /**
+   * Reset local state
+   */
+  resetState() {
+    this.files = [];
+    this.singleFile = null;
+    this.singlePdfBytes = null;
+    this.pagesConfig = [];
+    this.settings = {
+      pageSize: 'fit',
+      orientation: 'portrait',
+      margin: 0,
+      splitMode: 'all',
+      splitRange: '1-3'
+    };
+  },
+
+  /**
+   * Get metadata descriptions
+   */
+  getToolMeta(toolId) {
+    const meta = {
+      'merge-pdf': {
+        title: 'Unir PDF',
+        description: 'Une varios archivos PDF en un solo documento organizado en el orden que desees.'
+      },
+      'split-pdf': {
+        title: 'Dividir PDF',
+        description: 'Divide un PDF por páginas sueltas o extrae rangos definidos en múltiples archivos nuevos.'
+      },
+      'extract-pages-pdf': {
+        title: 'Extraer Páginas de PDF',
+        description: 'Visualiza las páginas de tu PDF y selecciona cuáles quieres extraer en un nuevo archivo.'
+      },
+      'organize-pdf': {
+        title: 'Ordenar y Rotar PDF',
+        description: 'Organiza las páginas de tu documento arrastrándolas de forma visual y gíralas individualmente.'
+      },
+      'images-to-pdf': {
+        title: 'Imágenes a PDF',
+        description: 'Convierte tus imágenes a un documento PDF organizado y centrado con tamaño personalizable.'
+      }
+    };
+    return meta[toolId] || { title: 'Herramienta PDF', description: 'Edición de PDF local' };
+  },
+
+  /**
+   * File selection logic
+   */
+  async handleFilesSelected(selectedFiles) {
+    const isImgToPdf = this.toolId === 'images-to-pdf';
+    
+    // Validate files
+    const validFiles = selectedFiles.filter(file => {
+      const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
+      const isImg = file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/i.test(file.name);
+      
+      if (isImgToPdf && !isImg) {
+        Toast.show(`El archivo "${file.name}" no es una imagen válida.`, 'error');
+        return false;
+      }
+      if (!isImgToPdf && !isPdf) {
+        Toast.show(`El archivo "${file.name}" no es un documento PDF válido.`, 'error');
+        return false;
+      }
+      
+      // Limit 40MB
+      if (file.size > 40 * 1024 * 1024) {
+        Toast.show(`El archivo "${file.name}" excede el límite de 40MB.`, 'error');
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+
+    const mainArea = document.getElementById('workspace-main');
+    if (!mainArea) return;
+
+    if (isImgToPdf) {
+      // Multiple Images to PDF
+      this.files = [...this.files, ...validFiles];
+      this.renderMultiFileArea();
+    } else if (this.toolId === 'merge-pdf') {
+      // Multiple PDFs to Merge
+      this.files = [...this.files, ...validFiles];
+      this.renderMultiFileArea();
+    } else {
+      // Single PDF processing tools (Split, Extract, Organize)
+      ProgressBar.render('progress-container', 10, 'Cargando archivo PDF...');
+      
+      this.singleFile = validFiles[0];
+      try {
+        this.singlePdfBytes = await Helpers.fileToByteArray(this.singleFile);
+        
+        ProgressBar.render('progress-container', 30, 'Analizando páginas...');
+        const count = await PdfProcessor.getPageCount(this.singlePdfBytes);
+        
+        this.pagesConfig = [];
+        for (let i = 0; i < count; i++) {
+          this.pagesConfig.push({
+            index: i,
+            rotation: 0,
+            selected: true // Selected by default for extraction/split
+          });
+        }
+        
+        ProgressBar.render('progress-container', 50, 'Generando miniaturas visuales...');
+        this.renderSingleFileArea();
+        
+        // Asynchronously render thumbnails into canvases to keep UI responsive!
+        this.renderAllThumbnails();
+        
+      } catch (err) {
+        console.error(err);
+        Toast.show(`Error al cargar el PDF: ${err.message}`, 'error');
+        this.resetState();
+      } finally {
+        ProgressBar.clear('progress-container');
+      }
+    }
+  },
+
+  /**
+   * Render workspace for tools containing multiple files (Merge PDF, Images to PDF)
+   */
+  renderMultiFileArea() {
+    const mainArea = document.getElementById('workspace-main');
+    if (!mainArea) return;
+
+    const isImgToPdf = this.toolId === 'images-to-pdf';
+
+    mainArea.innerHTML = `
+      <div class="space-y-4">
+        <div class="flex justify-between items-center">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-neutral-500 light:text-zinc-400">
+            Archivos Cargados (${this.files.length})
+          </h4>
+          <span class="text-[10px] text-violet-400 font-semibold flex items-center gap-1 animate-pulse">
+            <i data-lucide="info" class="w-3 h-3"></i>
+            Arrastra las tarjetas para reordenar la secuencia
+          </span>
+        </div>
+
+        <!-- Draggable cards Grid -->
+        <div id="pdf-cards-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          ${this.files.map((file, idx) => {
+            const isPdf = file.type === 'application/pdf';
+            const icon = isPdf ? 'file-text' : 'image';
+            const iconColor = isPdf ? 'text-rose-400' : 'text-blue-400';
+            
+            return `
+              <div 
+                class="group relative bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col items-center text-center gap-3 transition-all hover:border-violet-500/40 hover:-translate-y-0.5 select-none cursor-grab active:cursor-grabbing light:bg-white light:border-zinc-200" 
+                draggable="true" 
+                data-idx="${idx}"
+              >
+                <!-- Remove Button -->
+                <button class="remove-card-btn absolute top-2 right-2 p-1 rounded-lg text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10 opacity-0 group-hover:opacity-100 transition-all z-10" data-idx="${idx}">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+
+                <!-- Icon/Thumbnail container -->
+                <div class="w-14 h-14 rounded-xl bg-zinc-950 flex items-center justify-center shadow-inner ${iconColor} light:bg-zinc-50">
+                  <i data-lucide="${icon}" class="w-7 h-7"></i>
+                </div>
+
+                <div class="w-full">
+                  <p class="text-xs font-bold text-white truncate px-2 light:text-zinc-950">${file.name}</p>
+                  <p class="text-[10px] text-neutral-500 mt-0.5">${Helpers.formatBytes(file.size)}</p>
+                </div>
+
+                <!-- Sequence Badge -->
+                <div class="px-2 py-0.5 rounded-full bg-zinc-950 border border-zinc-800 text-[9px] font-bold text-neutral-400 light:bg-zinc-100 light:border-zinc-200">
+                  Secuencia #${idx + 1}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <button id="add-more-pdf-btn" class="w-full py-4 rounded-2xl border border-dashed border-zinc-800 hover:border-zinc-700 bg-zinc-950/20 text-xs font-semibold text-neutral-400 hover:text-white transition-all light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600">
+          + Añadir más archivos
+        </button>
+      </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+
+    // Bind cards removal
+    const removeBtns = mainArea.querySelectorAll('.remove-card-btn');
+    removeBtns.forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.getAttribute('data-idx'));
+        this.files.splice(idx, 1);
+        
+        if (this.files.length === 0) {
+          this.resetState();
+          this.render(document.getElementById('app'), this.toolId);
+        } else {
+          this.renderMultiFileArea();
+        }
+      };
+    });
+
+    // Bind Drag & Drop sorting on card elements
+    const cards = mainArea.querySelectorAll('#pdf-cards-grid [draggable="true"]');
+    this.setupHtml5DragSorting(cards, (fromIdx, toIdx) => {
+      const temp = this.files[fromIdx];
+      this.files.splice(fromIdx, 1);
+      this.files.splice(toIdx, 0, temp);
+      this.renderMultiFileArea();
+    });
+
+    // Bind add more files button
+    DragDropArea.init({
+      containerId: 'add-more-pdf-btn',
+      accept: isImgToPdf ? ['image/*'] : ['.pdf', 'application/pdf'],
+      multiple: true,
+      onFilesSelected: (newFiles) => this.handleFilesSelected(newFiles)
+    });
+
+    // Enable process button
+    const procBtn = document.getElementById('process-btn');
+    procBtn.disabled = this.files.length < 2 && !isImgToPdf; // Images to PDF needs at least 1 image
+    if (!procBtn.disabled) {
+      procBtn.className = "w-full py-3 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:scale-98 text-white font-semibold text-xs transition-all shadow-lg shadow-violet-500/10 cursor-pointer flex items-center justify-center gap-2";
+    }
+
+    this.renderSidebarControls();
+    this.bindProcessAction();
+  },
+
+  /**
+   * Render workspace for single PDF manipulation (Split, Extract, Organize)
+   */
+  renderSingleFileArea() {
+    const mainArea = document.getElementById('workspace-main');
+    if (!mainArea) return;
+
+    mainArea.innerHTML = `
+      <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-950 pb-2 light:border-zinc-100">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-neutral-500 light:text-zinc-400">
+            Páginas del Documento (${this.pagesConfig.length})
+          </h4>
+          <div class="flex items-center gap-2">
+            ${this.toolId === 'extract-pages-pdf' ? `
+              <button id="select-all-btn" class="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-[10px] font-semibold text-neutral-300 hover:text-white transition-all light:bg-zinc-100 light:border-zinc-200 light:text-zinc-600">Marcar Todas</button>
+              <button id="deselect-all-btn" class="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-[10px] font-semibold text-neutral-300 hover:text-white transition-all light:bg-zinc-100 light:border-zinc-200 light:text-zinc-600">Desmarcar Todas</button>
+            ` : ''}
+            ${this.toolId === 'organize-pdf' ? `
+              <span class="text-[10px] text-violet-400 font-semibold flex items-center gap-1 animate-pulse">
+                <i data-lucide="info" class="w-3 h-3"></i>
+                Arrastra las páginas para reordenarlas
+              </span>
+            ` : ''}
+          </div>
+        </div>
+
+        <!-- Pages Thumbnail Grid -->
+        <div id="pages-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto pr-1 py-1">
+          ${this.pagesConfig.map((cfg, idx) => {
+            const isSelected = cfg.selected;
+            const isExtract = this.toolId === 'extract-pages-pdf';
+            const isOrganize = this.toolId === 'organize-pdf';
+            
+            let cardClass = 'border-zinc-800 bg-zinc-900/60 light:bg-white light:border-zinc-200';
+            if (isExtract && isSelected) {
+              cardClass = 'border-violet-500/40 bg-violet-500/5 light:bg-violet-50/50 light:border-violet-500/40';
+            }
+
+            return `
+              <div 
+                class="group relative border rounded-2xl p-3 flex flex-col items-center gap-3 transition-all hover:border-violet-500/35 select-none ${cardClass}"
+                draggable="${isOrganize ? 'true' : 'false'}"
+                data-idx="${idx}"
+                style="${isOrganize ? 'cursor: grab;' : ''}"
+              >
+                <!-- Top Actions Bar -->
+                <div class="w-full flex items-center justify-between gap-2 z-10">
+                  <!-- Checkbox (Extract Mode) -->
+                  ${isExtract ? `
+                    <label class="flex items-center cursor-pointer select-none">
+                      <input 
+                        type="checkbox" 
+                        class="page-select-checkbox w-4.5 h-4.5 rounded-lg border-zinc-800 accent-violet-500 cursor-pointer" 
+                        data-idx="${idx}"
+                        ${isSelected ? 'checked' : ''}
+                      >
+                    </label>
+                  ` : `
+                    <div></div>
+                  `}
+
+                  <!-- Page index label -->
+                  <span class="px-2 py-0.5 rounded-md bg-zinc-950 text-[10px] font-bold text-neutral-400 light:bg-zinc-100 light:text-zinc-600">
+                    Pág. ${cfg.index + 1}
+                  </span>
+                </div>
+
+                <!-- Canvas Thumbnail -->
+                <div class="w-full h-32 flex items-center justify-center bg-zinc-950 rounded-xl overflow-hidden border border-zinc-950/80 shadow-inner relative light:bg-zinc-50">
+                  <div class="absolute inset-0 flex items-center justify-center text-[10px] text-neutral-500 loader-msg">
+                    <div class="w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                  <canvas 
+                    id="page-canvas-${idx}" 
+                    class="max-w-full max-h-full object-contain transition-transform duration-200"
+                    style="transform: rotate(${cfg.rotation}deg);"
+                  ></canvas>
+                </div>
+
+                <!-- Page Operations (Organize Mode) -->
+                ${isOrganize ? `
+                  <div class="flex items-center gap-1">
+                    <button class="rot-card-btn p-1.5 rounded-lg text-neutral-500 hover:text-white hover:bg-zinc-800 light:hover:bg-zinc-100 light:hover:text-zinc-900 transition-all cursor-pointer" data-idx="${idx}" title="Rotar 90° horario">
+                      <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button class="delete-card-btn p-1.5 rounded-lg text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer" data-idx="${idx}" title="Eliminar página">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+
+    // Bind checkbox selects (Extract Mode)
+    if (this.toolId === 'extract-pages-pdf') {
+      const selectAllBtn = document.getElementById('select-all-btn');
+      const deselectAllBtn = document.getElementById('deselect-all-btn');
+
+      selectAllBtn.onclick = () => {
+        this.pagesConfig.forEach(c => c.selected = true);
+        this.renderSingleFileArea();
+        this.restoreCanvasThumbnails();
+      };
+      
+      deselectAllBtn.onclick = () => {
+        this.pagesConfig.forEach(c => c.selected = false);
+        this.renderSingleFileArea();
+        this.restoreCanvasThumbnails();
+      };
+
+      const checkBoxes = mainArea.querySelectorAll('.page-select-checkbox');
+      checkBoxes.forEach(box => {
+        box.onchange = (e) => {
+          const idx = parseInt(box.getAttribute('data-idx'));
+          this.pagesConfig[idx].selected = e.target.checked;
+          
+          // Toggle card selected border classes manually to avoid canvas wipeout redraw
+          const card = box.closest('[data-idx]');
+          if (e.target.checked) {
+            card.className = "group relative border rounded-2xl p-3 flex flex-col items-center gap-3 transition-all hover:border-violet-500/35 select-none border-violet-500/40 bg-violet-500/5 light:bg-violet-50/50 light:border-violet-500/40";
+          } else {
+            card.className = "group relative border rounded-2xl p-3 flex flex-col items-center gap-3 transition-all hover:border-violet-500/35 select-none border-zinc-800 bg-zinc-900/60 light:bg-white light:border-zinc-200";
+          }
+        };
+      });
+    }
+
+    // Bind rotate & delete page (Organize Mode)
+    if (this.toolId === 'organize-pdf') {
+      const rotBtns = mainArea.querySelectorAll('.rot-card-btn');
+      const delBtns = mainArea.querySelectorAll('.delete-card-btn');
+
+      rotBtns.forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const idx = parseInt(btn.getAttribute('data-idx'));
+          this.pagesConfig[idx].rotation = (this.pagesConfig[idx].rotation + 90) % 360;
+          
+          // Apply transformation in place
+          const canvas = document.getElementById(`page-canvas-${idx}`);
+          if (canvas) {
+            canvas.style.transform = `rotate(${this.pagesConfig[idx].rotation}deg)`;
+          }
+        };
+      });
+
+      delBtns.forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const idx = parseInt(btn.getAttribute('data-idx'));
+          this.pagesConfig.splice(idx, 1);
+          
+          if (this.pagesConfig.length === 0) {
+            Toast.show('Has eliminado todas las páginas del PDF.', 'warning');
+            this.resetState();
+            this.render(document.getElementById('app'), this.toolId);
+          } else {
+            this.renderSingleFileArea();
+            this.restoreCanvasThumbnails();
+          }
+        };
+      });
+
+      // Drag sorting
+      const pageCards = mainArea.querySelectorAll('#pages-grid [draggable="true"]');
+      this.setupHtml5DragSorting(pageCards, (fromIdx, toIdx) => {
+        const temp = this.pagesConfig[fromIdx];
+        this.pagesConfig.splice(fromIdx, 1);
+        this.pagesConfig.splice(toIdx, 0, temp);
+        this.renderSingleFileArea();
+        this.restoreCanvasThumbnails();
+      });
+    }
+
+    // Enable process button
+    const procBtn = document.getElementById('process-btn');
+    procBtn.disabled = false;
+    procBtn.className = "w-full py-3 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:scale-98 text-white font-semibold text-xs transition-all shadow-lg shadow-violet-500/10 cursor-pointer flex items-center justify-center gap-2";
+
+    this.renderSidebarControls();
+    this.bindProcessAction();
+  },
+
+  /**
+   * Setup HTML5 Drag and Drop ordering sequences on items list
+   */
+  setupHtml5DragSorting(elements, onReorder) {
+    let draggedIdx = null;
+
+    elements.forEach(el => {
+      el.addEventListener('dragstart', (e) => {
+        draggedIdx = parseInt(el.getAttribute('data-idx'));
+        el.classList.add('opacity-40');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+
+      el.addEventListener('dragend', () => {
+        el.classList.remove('opacity-40');
+        elements.forEach(item => item.classList.remove('bg-violet-500/10', 'border-violet-500/40'));
+      });
+
+      el.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        el.classList.add('bg-violet-500/10', 'border-violet-500/40');
+      });
+
+      el.addEventListener('dragleave', () => {
+        el.classList.remove('bg-violet-500/10', 'border-violet-500/40');
+      });
+
+      el.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const dropIdx = parseInt(el.getAttribute('data-idx'));
+        if (draggedIdx !== null && draggedIdx !== dropIdx) {
+          onReorder(draggedIdx, dropIdx);
+        }
+      });
+    });
+  },
+
+  /**
+   * Asynchronously load page images using PDFJS on canvas grids
+   */
+  async renderAllThumbnails() {
+    for (let i = 0; i < this.pagesConfig.length; i++) {
+      try {
+        const canvas = await PdfProcessor.renderPageToCanvas(this.singlePdfBytes, this.pagesConfig[i].index + 1, 0.45);
+        
+        // Save canvas representation in state cache so it survives re-renders
+        this.pagesConfig[i].thumbnailCanvas = canvas;
+        
+        this.drawCanvasOnTarget(i, canvas);
+      } catch (err) {
+        console.error('Error loading thumbnail for index', i, err);
+      }
+    }
+  },
+
+  /**
+   * Draw the cached canvas on target element and remove loader indicators
+   */
+  drawCanvasOnTarget(idx, sourceCanvas) {
+    const targetCanvas = document.getElementById(`page-canvas-${idx}`);
+    if (!targetCanvas) return;
+
+    targetCanvas.width = sourceCanvas.width;
+    targetCanvas.height = sourceCanvas.height;
+    
+    const ctx = targetCanvas.getContext('2d');
+    ctx.drawImage(sourceCanvas, 0, 0);
+
+    // Hide loader
+    const parent = targetCanvas.closest('div');
+    if (parent) {
+      const loader = parent.querySelector('.loader-msg');
+      if (loader) loader.style.display = 'none';
+    }
+  },
+
+  /**
+   * Restores canvases from cache when rendering pages configurations
+   */
+  restoreCanvasThumbnails() {
+    this.pagesConfig.forEach((cfg, idx) => {
+      if (cfg.thumbnailCanvas) {
+        this.drawCanvasOnTarget(idx, cfg.thumbnailCanvas);
+      }
+    });
+  },
+
+  /**
+   * Render control menus on sidebar
+   */
+  renderSidebarControls() {
+    const container = document.getElementById('sidebar-controls');
+    if (!container) return;
+
+    if (this.toolId === 'images-to-pdf') {
+      container.innerHTML = `
+        <div class="space-y-4 text-left">
+          <!-- Page size selector -->
+          <div class="space-y-1.5">
+            <label class="text-[11px] font-semibold text-neutral-400 light:text-zinc-600">Tamaño de Página</label>
+            <select id="pdf-size" class="w-full p-2 bg-zinc-950 border border-zinc-800 rounded-lg text-xs font-semibold focus:outline-none focus:border-violet-500 light:bg-zinc-50 light:border-zinc-200 light:text-zinc-950">
+              <option value="fit" ${this.settings.pageSize === 'fit' ? 'selected' : ''}>Ajustar a la Imagen</option>
+              <option value="a4" ${this.settings.pageSize === 'a4' ? 'selected' : ''}>A4 (210 x 297 mm)</option>
+              <option value="letter" ${this.settings.pageSize === 'letter' ? 'selected' : ''}>Carta (US Letter)</option>
+            </select>
+          </div>
+
+          <!-- Page orientation -->
+          <div class="space-y-1.5 ${this.settings.pageSize === 'fit' ? 'opacity-40 pointer-events-none' : ''}" id="pdf-orient-block">
+            <label class="text-[11px] font-semibold text-neutral-400 light:text-zinc-600">Orientación</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button class="orient-btn py-2 rounded-xl border text-xs font-semibold transition-all ${this.settings.orientation === 'portrait' ? 'border-violet-500 bg-violet-500/5 text-violet-400' : 'border-zinc-800 bg-zinc-950 text-neutral-300 light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600'}" data-val="portrait">Vertical</button>
+              <button class="orient-btn py-2 rounded-xl border text-xs font-semibold transition-all ${this.settings.orientation === 'landscape' ? 'border-violet-500 bg-violet-500/5 text-violet-400' : 'border-zinc-800 bg-zinc-950 text-neutral-300 light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600'}" data-val="landscape">Horizontal</button>
+            </div>
+          </div>
+
+          <!-- Margins size -->
+          <div class="space-y-1.5">
+            <label class="text-[11px] font-semibold text-neutral-400 light:text-zinc-600">Márgenes de Página</label>
+            <div class="grid grid-cols-3 gap-2" id="pdf-margin-block">
+              <button class="margin-btn py-2 rounded-xl border text-[11px] font-semibold transition-all ${this.settings.margin === 0 ? 'border-violet-500 bg-violet-500/5 text-violet-400' : 'border-zinc-800 bg-zinc-950 text-neutral-300 light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600'}" data-val="0">Ninguno</button>
+              <button class="margin-btn py-2 rounded-xl border text-[11px] font-semibold transition-all ${this.settings.margin === 15 ? 'border-violet-500 bg-violet-500/5 text-violet-400' : 'border-zinc-800 bg-zinc-950 text-neutral-300 light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600'}" data-val="15">Pequeño</button>
+              <button class="margin-btn py-2 rounded-xl border text-[11px] font-semibold transition-all ${this.settings.margin === 30 ? 'border-violet-500 bg-violet-500/5 text-violet-400' : 'border-zinc-800 bg-zinc-950 text-neutral-300 light:border-zinc-200 light:bg-zinc-50 light:text-zinc-600'}" data-val="30">Grande</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Select size change
+      const selSize = document.getElementById('pdf-size');
+      selSize.onchange = (e) => {
+        this.settings.pageSize = e.target.value;
+        this.renderSidebarControls();
+      };
+
+      // Orientation button change
+      const orientBtns = container.querySelectorAll('.orient-btn');
+      orientBtns.forEach(btn => {
+        btn.onclick = () => {
+          this.settings.orientation = btn.getAttribute('data-val');
+          this.renderSidebarControls();
+        };
+      });
+
+      // Margin button change
+      const marginBtns = container.querySelectorAll('.margin-btn');
+      marginBtns.forEach(btn => {
+        btn.onclick = () => {
+          this.settings.margin = parseInt(btn.getAttribute('data-val'));
+          this.renderSidebarControls();
+        };
+      });
+
+    } else if (this.toolId === 'split-pdf') {
+      container.innerHTML = `
+        <div class="space-y-4 text-left">
+          <!-- Split options -->
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input 
+                type="radio" 
+                name="split-mode-radio" 
+                value="all" 
+                ${this.settings.splitMode === 'all' ? 'checked' : ''}
+                class="w-4 h-4 text-violet-500 focus:ring-violet-500 accent-violet-500"
+              >
+              <span class="text-xs font-semibold text-neutral-200 light:text-zinc-700">Dividir todas las páginas</span>
+            </label>
+            <p class="text-[10px] text-neutral-500 ml-6">Genera un PDF individual por cada página en un archivo comprimido ZIP.</p>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-zinc-950 light:border-zinc-100">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input 
+                type="radio" 
+                name="split-mode-radio" 
+                value="range" 
+                ${this.settings.splitMode === 'range' ? 'checked' : ''}
+                class="w-4 h-4 text-violet-500 focus:ring-violet-500 accent-violet-500"
+              >
+              <span class="text-xs font-semibold text-neutral-200 light:text-zinc-700">Extraer rango específico</span>
+            </label>
+            
+            <div class="ml-6 space-y-1.5 ${this.settings.splitMode !== 'range' ? 'opacity-40 pointer-events-none' : ''}">
+              <input 
+                type="text" 
+                id="range-input" 
+                value="${this.settings.splitRange}" 
+                placeholder="Ej. 1-3, 5, 8-10"
+                class="w-full p-2 bg-zinc-950 border border-zinc-800 rounded-lg text-xs font-mono text-center focus:outline-none focus:border-violet-500 light:bg-zinc-50 light:border-zinc-200 light:text-zinc-950"
+              >
+              <p class="text-[9px] text-neutral-500 leading-normal">Indica páginas o rangos separados por comas. Límite máx: <strong>${this.pagesConfig.length}</strong></p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const radios = container.querySelectorAll('[name="split-mode-radio"]');
+      radios.forEach(r => {
+        r.onchange = (e) => {
+          this.settings.splitMode = e.target.value;
+          this.renderSidebarControls();
+        };
+      });
+
+      const rngInput = document.getElementById('range-input');
+      if (rngInput) {
+        rngInput.oninput = (e) => {
+          this.settings.splitRange = e.target.value;
+        };
+      }
+
+    } else if (this.toolId === 'extract-pages-pdf') {
+      const selectedCount = this.pagesConfig.filter(c => c.selected).length;
+      container.innerHTML = `
+        <div class="space-y-3 text-left">
+          <p class="text-xs text-neutral-400 light:text-zinc-600">
+            Has seleccionado <strong class="text-violet-400 font-bold">${selectedCount}</strong> de <strong class="text-white light:text-zinc-900">${this.pagesConfig.length}</strong> páginas disponibles para extraer.
+          </p>
+          <p class="text-[10px] text-neutral-500 leading-normal">
+            Se generará un único documento PDF con las páginas marcadas manteniendo el orden de secuencia actual.
+          </p>
+        </div>
+      `;
+
+    } else if (this.toolId === 'organize-pdf') {
+      container.innerHTML = `
+        <div class="space-y-3 text-left">
+          <p class="text-xs text-neutral-400 light:text-zinc-600">
+            Reorganiza las páginas arrastrándolas de posición. Usa el icono de flecha curva para rotar páginas individuales 90 grados.
+          </p>
+          <p class="text-[10px] text-neutral-500 leading-normal">
+            Se compilará un nuevo documento PDF aplicando todas las rotaciones y ordenamientos configurados.
+          </p>
+        </div>
+      `;
+    } else {
+      // Merge PDF
+      container.innerHTML = `
+        <div class="space-y-3 text-left">
+          <p class="text-xs text-neutral-400 light:text-zinc-600">
+            Une múltiples archivos PDF ordenándolos según su badge de Secuencia.
+          </p>
+          <p class="text-[10px] text-neutral-500 leading-normal">
+            Generará un único PDF continuo conteniendo la suma de todas las páginas de los documentos.
+          </p>
+        </div>
+      `;
+    }
+  },
+
+  /**
+   * Bind the PDF process triggers
+   */
+  bindProcessAction() {
+    const processBtn = document.getElementById('process-btn');
+    if (!processBtn) return;
+
+    processBtn.onclick = async () => {
+      ProgressBar.clear('progress-container');
+      processBtn.disabled = true;
+      processBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      try {
+        const toolMeta = this.getToolMeta(this.toolId);
+        
+        // 1. Merge PDF Flow
+        if (this.toolId === 'merge-pdf') {
+          ProgressBar.render('progress-container', 20, 'Leyendo archivos PDF...');
+          const pdfArrays = [];
+          let originalSizeTotal = 0;
+
+          for (const file of this.files) {
+            const bytes = await Helpers.fileToByteArray(file);
+            pdfArrays.push(bytes);
+            originalSizeTotal += file.size;
+          }
+
+          ProgressBar.render('progress-container', 60, 'Uniéndolos en un solo documento...');
+          const mergedBlob = await PdfProcessor.mergePdfs(pdfArrays);
+
+          ProgressBar.render('progress-container', 90, 'Descargando archivo unificado...');
+          const outName = `PDFito_unido_${Date.now()}.pdf`;
+          Helpers.triggerDownload(mergedBlob, outName);
+
+          ProgressBar.render('progress-container', 100, '¡Completado!');
+          HistoryManager.addEntry({
+            toolId: this.toolId,
+            toolName: toolMeta.title,
+            fileName: outName,
+            originalSize: originalSizeTotal,
+            finalSize: mergedBlob.size
+          });
+
+          Toast.show('PDFs unidos correctamente.');
+        } 
+        
+        // 2. Images to PDF Flow
+        else if (this.toolId === 'images-to-pdf') {
+          ProgressBar.render('progress-container', 20, 'Cargando y procesando imágenes...');
+          const imageList = [];
+          let originalSizeTotal = 0;
+
+          for (const file of this.files) {
+            const img = await Helpers.fileToImage(file);
+            imageList.push({
+              imgElement: img,
+              type: file.type
+            });
+            originalSizeTotal += file.size;
+          }
+
+          ProgressBar.render('progress-container', 60, 'Generando páginas PDF...');
+          const config = {
+            pageSize: this.settings.pageSize,
+            orientation: this.settings.orientation,
+            margin: this.settings.margin
+          };
+          const pdfBlob = await PdfProcessor.convertImagesToPdf(imageList, config);
+
+          ProgressBar.render('progress-container', 90, 'Descargando PDF generado...');
+          const outName = Helpers.changeExtension(this.files[0].name, 'pdf');
+          Helpers.triggerDownload(pdfBlob, outName);
+
+          ProgressBar.render('progress-container', 100, '¡Completado!');
+          HistoryManager.addEntry({
+            toolId: this.toolId,
+            toolName: toolMeta.title,
+            fileName: outName,
+            originalSize: originalSizeTotal,
+            finalSize: pdfBlob.size
+          });
+
+          Toast.show('Imágenes convertidas a PDF con éxito.');
+        } 
+        
+        // 3. Extract Pages Flow
+        else if (this.toolId === 'extract-pages-pdf') {
+          const selectedIndices = this.pagesConfig
+            .filter(c => c.selected)
+            .map(c => c.index);
+
+          if (selectedIndices.length === 0) {
+            throw new Error('Debes seleccionar al menos una página para extraer');
+          }
+
+          ProgressBar.render('progress-container', 40, 'Extrayendo páginas del PDF...');
+          const extractedBlob = await PdfProcessor.extractPages(this.singlePdfBytes, selectedIndices);
+
+          ProgressBar.render('progress-container', 80, 'Descargando PDF extraído...');
+          const outName = Helpers.appendSuffix(this.singleFile.name, `-extraido-${selectedIndices.length}-paginas`);
+          Helpers.triggerDownload(extractedBlob, outName);
+
+          ProgressBar.render('progress-container', 100, '¡Completado!');
+          HistoryManager.addEntry({
+            toolId: this.toolId,
+            toolName: toolMeta.title,
+            fileName: outName,
+            originalSize: this.singleFile.size,
+            finalSize: extractedBlob.size
+          });
+
+          Toast.show(`Se extrajeron ${selectedIndices.length} páginas correctamente.`);
+        } 
+        
+        // 4. Organize & Rotate PDF Flow
+        else if (this.toolId === 'organize-pdf') {
+          ProgressBar.render('progress-container', 40, 'Generando nuevo ordenamiento y rotaciones...');
+          
+          const mapping = this.pagesConfig.map(cfg => ({
+            index: cfg.index,
+            rotation: cfg.rotation
+          }));
+
+          const compiledBlob = await PdfProcessor.reorderAndRotatePages(this.singlePdfBytes, mapping);
+
+          ProgressBar.render('progress-container', 80, 'Descargando PDF organizado...');
+          const outName = Helpers.appendSuffix(this.singleFile.name, '-organizado');
+          Helpers.triggerDownload(compiledBlob, outName);
+
+          ProgressBar.render('progress-container', 100, '¡Completado!');
+          HistoryManager.addEntry({
+            toolId: this.toolId,
+            toolName: toolMeta.title,
+            fileName: outName,
+            originalSize: this.singleFile.size,
+            finalSize: compiledBlob.size
+          });
+
+          Toast.show('PDF organizado y descargado.');
+        } 
+        
+        // 5. Split PDF Flow
+        else if (this.toolId === 'split-pdf') {
+          if (this.settings.splitMode === 'all') {
+            ProgressBar.render('progress-container', 30, 'Dividiendo páginas individuales...');
+            const blobs = await PdfProcessor.splitAllPages(this.singlePdfBytes);
+
+            ProgressBar.render('progress-container', 75, 'Creando archivo ZIP...');
+            const zipFiles = blobs.map((blob, idx) => ({
+              name: Helpers.appendSuffix(this.singleFile.name, `-pag-${idx + 1}`),
+              blob: blob
+            }));
+
+            const zipName = `PDFito_dividido_${Date.now()}.zip`;
+            await Helpers.downloadAsZip(zipFiles, zipName);
+
+            ProgressBar.render('progress-container', 100, '¡Completado!');
+            HistoryManager.addEntry({
+              toolId: this.toolId,
+              toolName: toolMeta.title,
+              fileName: zipName,
+              originalSize: this.singleFile.size,
+              finalSize: null // Size of ZIP could vary
+            });
+
+            Toast.show(`PDF dividido en ${blobs.length} archivos dentro de un ZIP.`);
+          } else {
+            // Range split
+            ProgressBar.render('progress-container', 20, 'Analizando rangos...');
+            const rangeStr = this.settings.splitRange.replace(/\s+/g, '');
+            
+            // Parse ranges: e.g. "1-3, 5, 7"
+            const pageIndices = [];
+            const parts = rangeStr.split(',');
+            const maxPage = this.pagesConfig.length;
+
+            for (const part of parts) {
+              if (part.includes('-')) {
+                const bounds = part.split('-');
+                const start = parseInt(bounds[0]);
+                const end = parseInt(bounds[1]);
+                
+                if (isNaN(start) || isNaN(end) || start < 1 || end > maxPage || start > end) {
+                  throw new Error(`Rango inválido: "${part}". Debe ser entre 1 y ${maxPage}.`);
+                }
+                
+                for (let j = start - 1; j < end; j++) {
+                  pageIndices.push(j);
+                }
+              } else {
+                const val = parseInt(part);
+                if (isNaN(val) || val < 1 || val > maxPage) {
+                  throw new Error(`Número de página inválido: "${part}". Debe ser entre 1 y ${maxPage}.`);
+                }
+                pageIndices.push(val - 1);
+              }
+            }
+
+            if (pageIndices.length === 0) {
+              throw new Error('El rango de páginas ingresado está vacío.');
+            }
+
+            ProgressBar.render('progress-container', 60, 'Generando archivo de rango...');
+            const rangeBlob = await PdfProcessor.extractPages(this.singlePdfBytes, pageIndices);
+
+            ProgressBar.render('progress-container', 90, 'Descargando PDF extraído...');
+            const outName = Helpers.appendSuffix(this.singleFile.name, `-rango-${rangeStr}`);
+            Helpers.triggerDownload(rangeBlob, outName);
+
+            ProgressBar.render('progress-container', 100, '¡Completado!');
+            HistoryManager.addEntry({
+              toolId: this.toolId,
+              toolName: toolMeta.title,
+              fileName: outName,
+              originalSize: this.singleFile.size,
+              finalSize: rangeBlob.size
+            });
+
+            Toast.show(`PDF de rango "${rangeStr}" generado correctamente.`);
+          }
+        }
+
+      } catch (err) {
+        console.error(err);
+        Toast.show(`Error al procesar: ${err.message}`, 'error');
+        ProgressBar.clear('progress-container');
+      } finally {
+        processBtn.disabled = false;
+        processBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        
+        // Remove progress bar after delay
+        setTimeout(() => ProgressBar.clear('progress-container'), 2000);
+      }
+    };
+  }
+};
+
+
+/* --- js\app.js --- */
+/**
+ * Main PDFito Application Bootstrap
+ * Coordinates Single Page Application (SPA) routing, theme toggling, global menus,
+ * keyboard shortcuts, and mounts pages.
+ */
+
+
+
+
+
+
+
+
+
+const App = {
+  container: null,
+  activeRoute: 'dashboard',
+
+  /**
+   * Bootstraps the application on page load
+   */
+  init() {
+    this.container = document.getElementById('app');
+    if (!this.container) return;
+
+    this.initTheme();
+    this.bindGlobalEvents();
+    this.setupRouting();
+    
+    // Initial route dispatch
+    this.handleRoute();
+  },
+
+  /**
+   * Initialize theme configuration (Dark/Light)
+   */
+  initTheme() {
+    let savedTheme = 'dark';
+    try {
+      savedTheme = localStorage.getItem('pdfito_theme') || 'dark';
+    } catch (e) {
+      console.warn('Storage blocked, defaulting to dark theme:', e);
+    }
+    const html = document.documentElement;
+    
+    if (savedTheme === 'light') {
+      html.classList.remove('dark');
+      html.classList.add('light');
+      document.body.className = "bg-[#fbfbfe] text-[#09090b] transition-colors duration-300 ease-in-out dot-grid min-h-screen flex flex-col light";
+    } else {
+      html.classList.remove('light');
+      html.classList.add('dark');
+      document.body.className = "bg-[#09090b] text-[#fafafa] transition-colors duration-300 ease-in-out dot-grid min-h-screen flex flex-col";
+    }
+  },
+
+  /**
+   * Bind events to global layout elements
+   */
+  bindGlobalEvents() {
+    // Theme toggle
+    const themeBtn = document.getElementById('theme-toggle');
+    if (themeBtn) {
+      themeBtn.onclick = () => {
+        const html = document.documentElement;
+        const isDark = html.classList.contains('dark');
+        
+        if (isDark) {
+          html.classList.remove('dark');
+          html.classList.add('light');
+          document.body.className = "bg-[#fbfbfe] text-[#09090b] transition-colors duration-300 ease-in-out dot-grid min-h-screen flex flex-col light";
+          try {
+            localStorage.setItem('pdfito_theme', 'light');
+          } catch (e) {
+            console.warn('Unable to save theme preference:', e);
+          }
+        } else {
+          html.classList.remove('light');
+          html.classList.add('dark');
+          document.body.className = "bg-[#09090b] text-[#fafafa] transition-colors duration-300 ease-in-out dot-grid min-h-screen flex flex-col";
+          try {
+            localStorage.setItem('pdfito_theme', 'dark');
+          } catch (e) {
+            console.warn('Unable to save theme preference:', e);
+          }
+        }
+        
+        // Refresh icons inside buttons
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      };
+    }
+
+    // Info Modal trigger
+    const infoBtn = document.getElementById('info-btn');
+    if (infoBtn) {
+      infoBtn.onclick = () => this.toggleInfoModal(true);
+    }
+
+    // Keyboard Shortcuts (Esc to exit modal or navigate back)
+    window.onkeydown = (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('modal-container');
+        if (modal && !modal.classList.contains('hidden')) {
+          this.toggleInfoModal(false);
+          modal.classList.add('hidden'); // Close any modal
+        } else if (window.location.hash && window.location.hash !== '#dashboard') {
+          window.location.hash = '#dashboard';
+        }
+      }
+    };
+  },
+
+  /**
+   * Info Modal logic helper
+   */
+  toggleInfoModal(show) {
+    const container = document.getElementById('modal-container');
+    const content = document.getElementById('info-modal-content');
+    if (!container || !content) return;
+
+    if (show) {
+      container.className = "fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4";
+      container.innerHTML = content.innerHTML;
+      container.classList.remove('hidden');
+      
+      // Close listeners
+      const closeBtn = container.querySelector('.close-modal-btn');
+      closeBtn.onclick = () => this.toggleInfoModal(false);
+      container.onclick = (e) => {
+        if (e.target === container) this.toggleInfoModal(false);
+      };
+
+      if (window.lucide) window.lucide.createIcons();
+    } else {
+      container.classList.add('hidden');
+    }
+  },
+
+  /**
+   * Listen to hash changes for SPA router
+   */
+  setupRouting() {
+    window.addEventListener('hashchange', () => this.handleRoute());
+  },
+
+  /**
+   * Router handler
+   */
+  handleRoute() {
+    const hash = window.location.hash || '#dashboard';
+    this.activeRoute = hash.substring(1);
+    
+    // Update navbar active link styling
+    this.updateNavbarActiveLink();
+
+    // Route dispatch
+    if (this.activeRoute === 'dashboard') {
+      DashboardView.render(this.container);
+    } else if (this.activeRoute === 'history') {
+      this.renderHistoryView();
+    } else if (this.activeRoute === 'favorites') {
+      this.renderFavoritesView();
+    } else {
+      // Check if it is a PDF or Image tool
+      const isPdfTool = ['merge-pdf', 'split-pdf', 'extract-pages-pdf', 'organize-pdf', 'images-to-pdf'].includes(this.activeRoute);
+      const isImgTool = ['compress-image', 'resize-image', 'crop-image', 'rotate-image', 'jpg-to-png', 'png-to-jpg', 'webp-convert'].includes(this.activeRoute);
+      
+      if (isPdfTool) {
+        PdfToolsView.render(this.container, this.activeRoute);
+      } else if (isImgTool) {
+        ImageToolsView.render(this.container, this.activeRoute);
+      } else {
+        // Fallback dashboard
+        window.location.hash = '#dashboard';
+      }
+    }
+  },
+
+  /**
+   * Highlight current active page link in navigation bars
+   */
+  updateNavbarActiveLink() {
+    const links = ['dashboard', 'history', 'favorites'];
+    
+    // Desktop links
+    links.forEach(lnk => {
+      const el = document.getElementById(`nav-${lnk}`);
+      if (el) {
+        if (this.activeRoute === lnk || (lnk === 'dashboard' && !links.includes(this.activeRoute))) {
+          el.className = "text-sm font-semibold text-violet-400 light:text-violet-600 transition-colors";
+        } else {
+          el.className = "text-sm font-medium text-neutral-400 hover:text-white transition-colors light:text-zinc-500 light:hover:text-zinc-900";
+        }
+      }
+    });
+
+    // Mobile bottom navigation bar links highlighting
+    const mobileNavbar = document.querySelector('.md\\:hidden.fixed.bottom-0');
+    if (mobileNavbar) {
+      const anchors = mobileNavbar.querySelectorAll('a');
+      anchors.forEach(a => {
+        const href = a.getAttribute('href').substring(1);
+        const isActive = this.activeRoute === href || (href === 'dashboard' && !links.includes(this.activeRoute));
+        if (isActive) {
+          a.className = "flex flex-col items-center gap-0.5 text-violet-400 light:text-violet-600";
+        } else {
+          a.className = "flex flex-col items-center gap-0.5 text-neutral-400 hover:text-white light:text-zinc-500 light:hover:text-zinc-900";
+        }
+      });
+    }
+  },
+
+  /**
+   * Render history list view
+   */
+  renderHistoryView() {
+    const history = HistoryManager.getHistory();
+
+    this.container.innerHTML = `
+      <div class="space-y-6 page-enter max-w-4xl mx-auto w-full">
+        <div class="flex items-center justify-between border-b border-zinc-900 pb-4 light:border-zinc-100">
+          <div>
+            <h2 class="text-2xl font-extrabold text-white light:text-zinc-950">Historial Reciente</h2>
+            <p class="text-xs text-neutral-400 light:text-zinc-500 mt-1">Lista de operaciones realizadas en este navegador.</p>
+          </div>
+          
+          ${history.length > 0 ? `
+            <button id="clear-all-hist" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-500/30 bg-rose-500/5 hover:border-rose-500 text-rose-400 hover:text-rose-300 font-semibold text-xs transition-all cursor-pointer">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              Borrar Historial
+            </button>
+          ` : ''}
+        </div>
+
+        <div id="history-content" class="space-y-3">
+          ${history.length === 0 ? `
+            <div class="flex flex-col items-center justify-center py-20 text-center gap-4">
+              <div class="w-14 h-14 rounded-full bg-zinc-900 flex items-center justify-center text-neutral-600 light:bg-zinc-100">
+                <i data-lucide="clock" class="w-7 h-7"></i>
+              </div>
+              <div class="space-y-1">
+                <h3 class="text-sm font-semibold text-white light:text-zinc-900">Historial vacío</h3>
+                <p class="text-xs text-neutral-500 max-w-xs light:text-zinc-500">Aquí se registrarán tus archivos procesados localmente.</p>
+              </div>
+              <a href="#dashboard" class="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-xs font-semibold text-neutral-300 hover:text-white transition-all light:bg-zinc-100 light:border-zinc-200 light:text-zinc-700">Explorar Herramientas</a>
+            </div>
+          ` : `
+            <div class="space-y-2">
+              ${history.map(item => {
+                const dateStr = new Date(item.timestamp).toLocaleString();
+                const isPdf = item.toolId.includes('pdf');
+                
+                // Formatted savings ratio
+                let savingText = '';
+                if (item.originalSize && item.finalSize) {
+                  const pct = Math.round(((item.originalSize - item.finalSize) / item.originalSize) * 100);
+                  if (pct > 0) {
+                    savingText = `<span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-[9px] font-bold text-emerald-400">-${pct}%</span>`;
+                  }
+                }
+
+                const sizeDetails = item.originalSize 
+                  ? `${Helpers.formatBytes(item.originalSize)} ${item.finalSize ? `→ <span class="text-violet-400 font-bold">${Helpers.formatBytes(item.finalSize)}</span>` : ''}`
+                  : 'N/A';
+
+                return `
+                  <div class="flex items-center justify-between p-4 rounded-xl bg-zinc-900/60 border border-white/5 hover:border-white/10 transition-all light:bg-white light:border-zinc-200" data-hist-id="${item.id}">
+                    <div class="min-w-0 flex-grow pr-4 space-y-1">
+                      <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded bg-zinc-800 text-[10px] font-bold text-neutral-400 light:bg-zinc-100 light:text-zinc-600">${item.toolName}</span>
+                        ${savingText}
+                        <span class="text-[10px] text-neutral-500 font-medium">${dateStr}</span>
+                      </div>
+                      <h4 class="text-xs font-bold text-white truncate max-w-md light:text-zinc-900">${item.fileName}</h4>
+                      <p class="text-[10px] text-neutral-500 font-mono">${sizeDetails}</p>
+                    </div>
+                    
+                    <button class="delete-hist-item p-1.5 rounded-lg text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10 cursor-pointer" data-id="${item.id}" title="Eliminar registro">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
+        </div>
+      </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+
+    // Bind clear all
+    const clearBtn = document.getElementById('clear-all-hist');
+    if (clearBtn) {
+      clearBtn.onclick = () => {
+        HistoryManager.clearHistory();
+        Toast.show('Se ha borrado el historial de operaciones.');
+        this.renderHistoryView();
+      };
+    }
+
+    // Bind delete single items
+    const deleteButtons = this.container.querySelectorAll('.delete-hist-item');
+    deleteButtons.forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.getAttribute('data-id');
+        HistoryManager.removeEntry(id);
+        
+        // Remove element from DOM visual list
+        const row = this.container.querySelector(`[data-hist-id="${id}"]`);
+        if (row) {
+          row.style.opacity = '0';
+          row.style.transform = 'translateY(8px)';
+          setTimeout(() => {
+            this.renderHistoryView();
+          }, 300);
+        }
+      };
+    });
+  },
+
+  /**
+   * Render favorited tools view
+   */
+  renderFavoritesView() {
+    const favoritedIds = FavoritesManager.getFavorites();
+    const favTools = TOOLS.filter(tool => favoritedIds.includes(tool.id));
+
+    this.container.innerHTML = `
+      <div class="space-y-6 page-enter max-w-5xl mx-auto w-full">
+        <div class="border-b border-zinc-900 pb-4 light:border-zinc-100">
+          <h2 class="text-2xl font-extrabold text-white light:text-zinc-950">Tus Favoritos</h2>
+          <p class="text-xs text-neutral-400 light:text-zinc-500 mt-1">Acceso rápido a las herramientas que utilizas más a menudo.</p>
+        </div>
+
+        <div id="favorites-grid">
+          ${favTools.length === 0 ? `
+            <div class="flex flex-col items-center justify-center py-20 text-center gap-4">
+              <div class="w-14 h-14 rounded-full bg-zinc-900 flex items-center justify-center text-neutral-600 light:bg-zinc-100">
+                <i data-lucide="star" class="w-7 h-7"></i>
+              </div>
+              <div class="space-y-1">
+                <h3 class="text-sm font-semibold text-white light:text-zinc-900">Aún no tienes favoritos</h3>
+                <p class="text-xs text-neutral-500 max-w-xs light:text-zinc-500">Haz clic en la estrella de cualquier tarjeta en el panel de inicio para guardarla aquí.</p>
+              </div>
+              <a href="#dashboard" class="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-xs font-semibold text-neutral-300 hover:text-white transition-all light:bg-zinc-100 light:border-zinc-200 light:text-zinc-700">Ver todas las herramientas</a>
+            </div>
+          ` : `
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="fav-cards-grid">
+              <!-- Render cards -->
+            </div>
+          `}
+        </div>
+      </div>
+    `;
+
+    if (favTools.length > 0) {
+      const grid = document.getElementById('fav-cards-grid');
+      grid.innerHTML = favTools.map(tool => {
+        const categoryColor = tool.category === 'pdf' 
+          ? 'from-rose-500/20 to-red-500/10 hover:border-rose-500/20 text-rose-400' 
+          : 'from-blue-500/20 to-indigo-500/10 hover:border-blue-500/20 text-blue-400';
+
+        return `
+          <div class="group relative flex flex-col justify-between p-6 rounded-2xl bg-zinc-900/60 border border-white/5 hover:border-white/10 hover:bg-zinc-900/80 hover:shadow-xl hover:shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 light:bg-white light:border-zinc-200 cursor-pointer" data-href="#${tool.id}">
+            <button class="remove-fav-btn absolute top-5 right-5 p-1.5 rounded-lg border border-white/0 hover:border-white/5 hover:bg-white/5 text-yellow-400 hover:text-neutral-500 transition-all light:hover:border-black/5 light:hover:bg-black/5 z-10" data-id="${tool.id}" title="Quitar de favoritos">
+              <i data-lucide="star" class="w-4 h-4 fill-yellow-400"></i>
+            </button>
+            
+            <div class="space-y-4">
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-tr flex items-center justify-center shadow-inner ${categoryColor}">
+                <i data-lucide="${tool.icon}" class="w-5.5 h-5.5"></i>
+              </div>
+              
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-2">
+                  <h3 class="text-base font-bold text-white group-hover:text-violet-400 transition-colors light:text-zinc-950 light:group-hover:text-violet-600 leading-tight">${tool.name}</h3>
+                  <span class="px-2 py-0.5 text-[9px] font-bold tracking-wide uppercase rounded-full bg-zinc-800 text-neutral-400 light:bg-zinc-100 light:text-zinc-600">${tool.badge}</span>
+                </div>
+                <p class="text-xs text-neutral-400 leading-relaxed light:text-zinc-600 group-hover:text-neutral-300 light:group-hover:text-zinc-800 transition-colors">${tool.description}</p>
+              </div>
+            </div>
+            
+            <div class="mt-6 flex items-center gap-1 text-xs font-semibold text-neutral-500 group-hover:text-white transition-colors light:group-hover:text-zinc-950">
+              Abrir herramienta
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200"></i>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Bind cards click
+      grid.onclick = (e) => {
+        const removeBtn = e.target.closest('.remove-fav-btn');
+        if (removeBtn) {
+          e.stopPropagation();
+          const toolId = removeBtn.getAttribute('data-id');
+          FavoritesManager.toggleFavorite(toolId);
+          this.renderFavoritesView(); // Refresh
+          return;
+        }
+
+        const card = e.target.closest('[data-href]');
+        if (card) {
+          window.location.hash = card.getAttribute('data-href');
+        }
+      };
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+};
+
+// Start application when DOM is ready (with fallback for readyState)
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', () => App.init());
+} else {
+  App.init();
+}
+
+
+})(window);
+</script>
+
+  <!-- Configure PDF.js Worker -->
+  <script>
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    }
+  </script>
+</body>
+</html>
