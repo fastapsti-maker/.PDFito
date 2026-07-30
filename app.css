@@ -1,0 +1,333 @@
+/* ================================================================
+   PDFito — Premium Custom Styles
+   Dark mode: zinc-950 base, violet accents (unchanged, perfect)
+   Light mode: lavender-cream #f5f3ff base, deep indigo text,
+               violet/indigo colored shadows & accents
+   ================================================================ */
+
+:root {
+  /* Violet / Indigo brand palette */
+  --v50:  #f5f3ff;
+  --v100: #ede9fe;
+  --v200: #ddd6fe;
+  --v300: #c4b5fd;
+  --v400: #a78bfa;
+  --v500: #8b5cf6;
+  --v600: #7c3aed;
+  --v700: #6d28d9;
+
+  /* Dark base */
+  --dark-bg:     #09090b;
+  --dark-card:   #18181b;
+  --dark-border: #27272a;
+
+  /* Animations */
+  --animate-fade-in:  fade-in  0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-up: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-scale-in: scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Keyframes ──────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slide-up {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes scale-in {
+  from { transform: scale(0.96); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ── Glassmorphism ──────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.light .glass {
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(109, 40, 217, 0.18);
+  box-shadow: 0 4px 24px rgba(109, 40, 217, 0.08);
+}
+
+/* ── Dot-grid background ────────────────────────────────────── */
+.dot-grid {
+  background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.light .dot-grid {
+  background-image: radial-gradient(rgba(109, 40, 217, 0.15) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ── Scrollbars ─────────────────────────────────────────────── */
+::-webkit-scrollbar          { width: 6px; height: 6px; }
+::-webkit-scrollbar-track    { background: transparent; }
+.dark  ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 9999px; }
+.light ::-webkit-scrollbar-thumb { background: var(--v300); border-radius: 9999px; }
+.dark  ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+.light ::-webkit-scrollbar-thumb:hover { background: var(--v400); }
+
+/* ── Page transitions ───────────────────────────────────────── */
+.page-enter { animation: var(--animate-slide-up); }
+
+/* ================================================================
+   LIGHT MODE — GLOBAL OVERRIDES
+   All rules use .light as parent so they override dark defaults
+   ================================================================ */
+
+/* ── Body / Page background ─────────────────────────────────── */
+.light body {
+  background-color: var(--v50);
+  color: #1e1b4b;          /* deep indigo — excellent on lavender */
+}
+
+/* Ambient radial glow at the top of the page */
+.light body::before {
+  content: '';
+  position: fixed;
+  top: -160px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 860px;
+  height: 500px;
+  background: radial-gradient(ellipse at center,
+    rgba(139, 92, 246, 0.18) 0%,
+    rgba(99, 102, 241, 0.09) 50%,
+    transparent 75%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.light header {
+  background: rgba(245, 243, 255, 0.88) !important;
+  border-bottom: 1px solid rgba(109, 40, 217, 0.14) !important;
+  box-shadow: 0 1px 16px rgba(109, 40, 217, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.light footer {
+  background: rgba(237, 233, 254, 0.55) !important;
+  border-top: 1px solid rgba(109, 40, 217, 0.14) !important;
+  color: #6d28d9;
+}
+
+/* ── Mobile bottom nav ──────────────────────────────────────── */
+.light .mobile-nav {
+  background: rgba(245, 243, 255, 0.94) !important;
+  border-top: 1px solid rgba(109, 40, 217, 0.14) !important;
+  box-shadow: 0 -4px 20px rgba(109, 40, 217, 0.10);
+}
+
+/* ── TOOL CARDS ─────────────────────────────────────────────── */
+.light .tool-card {
+  background: #ffffff;
+  border: 1px solid rgba(109, 40, 217, 0.12) !important;
+  box-shadow:
+    0 2px 8px rgba(109, 40, 217, 0.07),
+    0 0 0 0 rgba(109, 40, 217, 0);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.light .tool-card:hover {
+  border-color: rgba(124, 58, 237, 0.45) !important;
+  box-shadow:
+    0 6px 28px rgba(109, 40, 217, 0.18),
+    0 2px 8px rgba(109, 40, 217, 0.10),
+    0 0 0 1px rgba(124, 58, 237, 0.12);
+  transform: translateY(-3px);
+}
+
+/* Card headings */
+.light .tool-card h3 {
+  color: #1e1b4b;
+}
+.light .tool-card:hover h3 {
+  color: #7c3aed;
+}
+
+/* Badge pill */
+.light .tool-badge {
+  background: var(--v100);
+  color: var(--v700);
+}
+
+/* Description text */
+.light .tool-card p {
+  color: #5b5299;
+}
+.light .tool-card:hover p {
+  color: #4c1d95;
+}
+
+/* "Abrir herramienta" action label */
+.light .tool-action-label {
+  color: var(--v400);
+}
+.light .tool-card:hover .tool-action-label {
+  color: var(--v700);
+}
+
+/* Star / fav button */
+.light .fav-btn:hover {
+  background: var(--v100) !important;
+  border-color: var(--v200) !important;
+}
+
+/* Category icon shadows */
+.light .cat-icon-pdf { box-shadow: 0 4px 14px rgba(239, 68, 68, 0.22); }
+.light .cat-icon-img { box-shadow: 0 4px 14px rgba(99, 102, 241, 0.22); }
+
+/* ── SEARCH BAR ─────────────────────────────────────────────── */
+.light input[type="text"] {
+  background: #ffffff !important;
+  border-color: rgba(109, 40, 217, 0.20) !important;
+  color: #1e1b4b !important;
+}
+.light input[type="text"]:focus {
+  border-color: var(--v500) !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.14) !important;
+}
+.light input[type="text"]::placeholder {
+  color: var(--v300) !important;
+}
+
+/* ── TABS (category filter) ─────────────────────────────────── */
+.light .tab-btn[data-active="true"],
+.light .tab-btn.active {
+  background: white !important;
+  color: #1e1b4b !important;
+  box-shadow: 0 1px 6px rgba(109, 40, 217, 0.12);
+}
+.light .tab-btn {
+  color: #7c6fab;
+}
+.light .tab-btn:hover {
+  color: #1e1b4b;
+}
+
+/* ── HERO TEXT ──────────────────────────────────────────────── */
+.light h1 {
+  background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.light h1 span {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.light p.hero-sub {
+  color: #5b5299;
+}
+
+/* ── GLASS CONTROLS ZONE ────────────────────────────────────── */
+.light .controls-zone {
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(109, 40, 217, 0.15);
+  box-shadow: 0 4px 20px rgba(109, 40, 217, 0.07);
+}
+
+/* ── TOOL VIEW PANELS (sidebar / upload zone) ───────────────── */
+.light .tool-panel,
+.light [class*="workspace-sidebar"],
+.light [id*="workspace-sidebar"] {
+  background: #ffffff;
+  border-color: rgba(109, 40, 217, 0.15) !important;
+  box-shadow: 0 4px 24px rgba(109, 40, 217, 0.08);
+}
+
+/* Upload zone */
+.light [id*="upload-zone"] {
+  border-color: rgba(109, 40, 217, 0.25) !important;
+  background: rgba(237, 233, 254, 0.35);
+}
+.light [id*="upload-zone"]:hover {
+  border-color: var(--v500) !important;
+  background: rgba(237, 233, 254, 0.60);
+}
+
+/* Inner panels */
+.light .light-panel {
+  background: var(--v50);
+  border-color: rgba(109, 40, 217, 0.15) !important;
+}
+
+/* Inputs & selects inside tool views */
+.light select,
+.light input[type="number"],
+.light input[type="range"] {
+  background: #ffffff !important;
+  border-color: rgba(109, 40, 217, 0.20) !important;
+  color: #1e1b4b !important;
+}
+
+/* ── MODAL ──────────────────────────────────────────────────── */
+.light #modal-container {
+  background: rgba(109, 40, 217, 0.10);
+  backdrop-filter: blur(8px);
+}
+.light #modal-container > div,
+.light [class*="bg-zinc-900"][class*="rounded-2xl"],
+.light [class*="bg-zinc-900"][class*="rounded-xl"] {
+  background: #ffffff !important;
+  border-color: rgba(109, 40, 217, 0.18) !important;
+  color: #1e1b4b;
+  box-shadow: 0 8px 40px rgba(109, 40, 217, 0.16);
+}
+
+/* ── TOAST NOTIFICATIONS ────────────────────────────────────── */
+.light .toast {
+  background: #ffffff;
+  border: 1px solid rgba(109, 40, 217, 0.18);
+  box-shadow: 0 8px 24px rgba(109, 40, 217, 0.14);
+  color: #1e1b4b;
+}
+
+/* ================================================================
+   DARK MODE — Cropper / comparison / drag (unchanged)
+   ================================================================ */
+.cropper-view-box,
+.cropper-face { border-radius: 8px; }
+.cropper-line, .cropper-point { background-color: #8b5cf6 !important; }
+.cropper-bg {
+  background-image: none !important;
+  background-color: #18181b !important;
+}
+.light .cropper-bg { background-color: var(--v50) !important; }
+
+.comparison-slider  { position: relative; overflow: hidden; user-select: none; }
+.comparison-image   { display: block; width: 100%; height: auto; pointer-events: none; }
+.comparison-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
+.comparison-handle  {
+  position: absolute; top: 0; bottom: 0; width: 2px;
+  background: #8b5cf6; cursor: ew-resize; z-index: 10;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+.comparison-handle-btn {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #8b5cf6; border: 3px solid #fff; color: white;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+@keyframes border-pulse {
+  0%, 100% { border-color: rgba(139, 92, 246, 0.4); }
+  50%       { border-color: rgba(139, 92, 246, 1);   }
+}
+.drag-active {
+  animation: border-pulse 1.5s infinite;
+  background: rgba(139, 92, 246, 0.05);
+}
